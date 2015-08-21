@@ -58,7 +58,7 @@ Modified on: 24/03/15
 				<label class="col-md-4 control-label">Sub Menu Image</label>
 				<div class="col-md-5">
 				    <input type="hidden" name="oldImage" id="" value="<?php echo $subMenu['image']?>" >
-				    <img class="media-object superbox-img previewimage" id="show_image11" name="show_image" src="<?php echo base_url("upload/submenu/".$subMenu['image']);?>">
+				    <img class="media-object superbox-img previewimage" id="show_image11" name="show_image" src="<?php echo $subMenu['image']; ?>">
 				     <input id="filestyle-11" class="filestyle" type="file" name='image' onchange="PreviewImage();" data-buttonbefore="true" style="position: absolute; clip: rect(0px, 0px, 0px, 0px);" tabindex="-1">
 				    <div class="bootstrap-filestyle input-group">
 					<span class="group-span-filestyle input-group-btn" tabindex="0">
@@ -67,7 +67,7 @@ Modified on: 24/03/15
 						Choose file
 					    </label>
 					</span>
-					<input class="form-control" id="filestyle-21" value="<?php echo $subMenu['name']; ?>" type="text" readonly>
+					<input class="form-control" id="filestyle-21" value="<?php $data=explode("/",$subMenu['image']); $count=count($data);  echo $data[$count-1]; ?>" type="text" readonly>
 				    </div>
 				    
 				</div>

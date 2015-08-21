@@ -33,11 +33,11 @@ Modified on: 24/03/15
 		</div>
 		<div class="panel-body">
 		   
-		    <div class="col-md-offset-1 col-md-8">
+		    <div class="col-md-offset-1 col-md-12">
 			<form id="form_validation" method="POST" enctype="multipart/form-data" action="<?php echo base_url('branboxController/subMenuItemAdd'); ?>" class="form-horizontal form12">
 			    <div class="form-group">
 				<label class="col-md-3 control-label">Menu Name</label>
-				<div class="col-md-5">
+				<div class="col-md-3">
 				    <select name="menuId" id="menuId" class="form-control">
 					<option selected="" disabled="">Select Menu</option>
 					<?php foreach($getMenu as $data) {?>
@@ -48,7 +48,7 @@ Modified on: 24/03/15
 			    </div>
 			     <div class="form-group">
 				<label class="col-md-3 control-label">Sub Menu Name</label>
-				<div class="col-md-5">
+				<div class="col-md-3">
 				    <select name="subMenuId" id="subMenuId" class="form-control">
 					
 				    </select>
@@ -56,13 +56,13 @@ Modified on: 24/03/15
 			    </div>
 			    <div class="form-group">
 				<label class="col-md-3 control-label">Sub Menu Item Name</label>
-				<div class="col-md-5">
+				<div class="col-md-3">
 				    <input type="text" name="name" id="name"  class="form-control" placeholder="Sub Menu Name" />
 				</div>
 			    </div>
 			    <div class="form-group">
 				<label class="col-md-3 control-label">Sub Menu Item Image</label>
-				<div class="col-md-5">
+				<div class="col-md-3">
 				    <img class="media-object superbox-img previewimage" id="show_image11" name="show_image" src="<?php echo base_url("assets/img/user-15.jpg");?>">
 				     <input id="filestyle-11" class="filestyle" type="file" name='image' onchange="PreviewImage();" data-buttonbefore="true" style="position: absolute; clip: rect(0px, 0px, 0px, 0px);" tabindex="-1">
 				    <div class="bootstrap-filestyle input-group">
@@ -80,20 +80,20 @@ Modified on: 24/03/15
 			    
 			     <div class="form-group">
 				<label class="col-md-3 control-label">Item Price</label>
-				<div class="col-md-5">
+				<div class="col-md-3">
 				    <input type="text" name="price" id="price" class="form-control"  placeholder="Price" />
 				</div>
 			    </div>
 			    
 			    <div class="form-group">
 				<label class="col-md-3 control-label">Item Tax</label>
-				<div class="col-md-5">
+				<div class="col-md-3">
 				    <input type="text" name="tax" id="tax" class="form-control"  placeholder="Tax" />
 				</div>
 			    </div>
 			        <div class="form-group">
 				<label class="col-md-3 control-label">Item Offers</label>
-				<div class="col-md-5">
+				<div class="col-md-3">
 				    <input type="text" name="offers" id="offers" class="form-control"  placeholder="Offers" />
 				</div>
 			    </div>
@@ -114,15 +114,64 @@ Modified on: 24/03/15
 				    <label class="col-md-1 control-label">ON</label>
 				</div>
 			    </div>
-			    <div class="form-group">
+			    
+			    	<div class="table-responsive col-md-8" >
+					<table class="table table-bordered">
+					    <thead>
+						<tr>
+						    <th>Ingredients</th>
+						    <th>price</th>
+						    <th>catogory</th>
+						    <th>Action</th>
+						</tr>
+					    </thead>
+					    <tbody>
+						<tr class="odd">
+						    <td><span><input type="text" name="ingredients[]" id="ingredients" class="form-control"  placeholder="ingredients"/></span></td>
+						    <td><span><input type="text" name="ingPrice[]" id="ingPrice" class="form-control"  placeholder="Price"/></span></td>
+						    <td><span><select  class="form-control" name="category[]">
+							    <option selected disabled>select</option>
+							    <option value="base">Base</option>
+							    <option value="default">default</option>
+							    <option value="addon">Addon</option>
+							</select></span>
+						    </td>
+						    <td><button type="button" class="btn btn-primary btn-sm addButton" data-template="textbox"><i class="fa fa-plus"></i></button></td>
+						</tr>
+						<tr class="odd hide" id="optionTemplate">
+						    <td><span><input type="text" name="ingredients[]" id="ingredients" class="form-control"  placeholder="ingredients"/></span></td>
+						    <td><span><input type="text" name="ingPrice[]" id="ingPrice" class="form-control"  placeholder="Price"/></span></td>
+						    <td><span><select  class="form-control" name="category[]">
+							<option  selected disabled >select</option>
+							<option value="base">Base</option>
+							<option value="default">Default</option>
+							<option value="addon">Addon</option>
+						    </select></span></td>
+						    
+						    <td><button type="button" class="btn btn-danger btn-sm removeButton" onclick="removerow($(this));" data-template="textbox"><i class="fa fa-trash"></i></button></td>
+						</tr>
+					    </tbody>
+					</table>
+				    </div>
+
+				    
+				    
+			    
+<!--			    <div class="form-group">
 				<label class="col-md-3 control-label">Item Ingredients</label>
-				<div class="col-md-8">
-				    <div class="col-md-6" id="ing">
+				<div class="col-md-7">
+				    <div class="col-sm-3" id="ing">
 					<input type="text" name="ingredients[]" id="ingredients" class="form-control"  placeholder="ingredients" />
 				    </div>
-				    <div class="col-md-6">
-					<label class="col-md-2 control-label">Price</label>
-					<div class="col-md-10">
+				    <div class="col-sm-3">
+					<label class="col-md-1 control-label">Price</label>
+					<div class="col-md-11">
+					    <input type="text" name="ingPrice[]" id="ingPrice" class="form-control"  placeholder="Price" />
+					</div>
+				    </div>
+				    <div class="col-sm-3">
+					<label class="col-md-1 control-label">Price</label>
+					<div class="col-md-11">
 					    <input type="text" name="ingPrice[]" id="ingPrice" class="form-control"  placeholder="Price" />
 					</div>
 				    </div>
@@ -131,7 +180,8 @@ Modified on: 24/03/15
 				    <button type="button" class="btn btn-primary btn-sm addButton" data-template="textbox"><i class="fa fa-plus"></i></button>
 				</div>
 			    </div>
-			    <div class="form-group odd hide" id="optionTemplate">
+-->
+<!--			    <div class="form-group odd hide" id="optionTemplate">
 				<label class="col-md-3 control-label"></label>
 				<div class="col-md-8">
 				    <div class="col-md-6">
@@ -143,12 +193,18 @@ Modified on: 24/03/15
 					    <input type="text" name="ingPrice[]" id="ingPrice" class="form-control"  placeholder="Price" />
 					</div>
 				    </div>
+				     <div class="col-md-6">
+					<label class="col-md-2 control-label">Price</label>
+					<div class="col-md-10">
+					    <input type="text" name="ingPrice[]" id="ingPrice" class="form-control"  placeholder="Price" />
+					</div>
+				    </div>
 				</div>
 				<div class="col-md-1 checkbox">
 				    <button type="button" class="btn btn-danger btn-sm removeButton" onclick="removerow($(this));" data-template="textbox"><i class="fa fa-trash"></i></button>
 				</div>
 			    </div>
-			   <div class="col-md-offset-6 col-md-12">
+-->			   <div class="col-md-offset-6 col-md-12">
 				 <div class="form-group">
 				    <label class="col col-4"></label>
 				    <button class="btn btn-md btn-danger " onclick="window.history.back();" type="button"> Cancel </button>
@@ -260,12 +316,29 @@ $(document).ready(function() {
                 }
             },
 	    "ingredients[]":{
-		group:"#ing",
-		validators:{
-		    notEmpty:{
-			message: 'It is required and can\'t be empty'
-		    }
-		}
+		group:"td",
+		 validators: {
+                    notEmpty: {
+                        message: 'It is required and can\'t be empty'
+                    }
+                }
+	    },
+	    "ingPrice[]":{
+		group:"td",
+		 validators: {
+                    notEmpty: {
+                        message: 'It is required and can\'t be empty'
+                    }
+                }
+	    },
+	    
+	    "category[]":{
+		group:"td",
+		 validators: {
+                    notEmpty: {
+                        message: 'It is required and can\'t be empty'
+                    }
+                }
 	    }
 	}
     });
@@ -296,6 +369,12 @@ function form_reset() {
 $(".addButton").click(function(){
     var $template = $('#optionTemplate');
     $clone    = $template.clone().removeClass('hide').removeAttr('id').insertBefore($template);
+	$name   = $clone.find('[name="ingredients[]"]');
+	$('#form_validation').bootstrapValidator('addField', $name);
+	$name   = $clone.find('[name="ingPrice[]"]');
+	$('#form_validation').bootstrapValidator('addField', $name);
+	$name   = $clone.find('[name="category[]"]');
+	$('#form_validation').bootstrapValidator('addField', $name);
 });
 
 function removerow($this){

@@ -55,7 +55,7 @@ Modified on: 24/03/15
 				<td><span><i class="fa fa-refresh fa-5x"></span></td>
 				<td><?php foreach($getMenu as $menu) if($menu['id']== $data['menuId'])echo $menu['name']; ?></td>
                                 <td><?php echo $data['name']; ?></td>
-				<td><img class=""  style="height: 75px;width: 105px;" src="<?php echo base_url("upload/submenu/".$data['image']);?>" ></td>
+				<td><img class=""  style="height: 75px;width: 105px;" src="<?php echo $data['image']; ?>" ></td>
 				<!--<td><?php echo $data['position']; ?></td>-->
 				<td><button <?php if($data['status']=="ON") echo 'class="btn btn-success"'; else  echo 'class="btn btn-danger"';  ?> name="status[]" id="status-<?php echo $data['id']; ?>"  value="<?php echo $data['id']; ?>"><?php echo $data['status']; ?></button></td>
 				<script>

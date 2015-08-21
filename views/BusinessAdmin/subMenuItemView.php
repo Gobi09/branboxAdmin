@@ -57,12 +57,10 @@ Modified on: 24/03/15
 			
 			    <tr class="odd new"  id="<?php echo $data['id'] ?>">
 				<td><span><i class="fa fa-refresh fa-5x"></span></td>
-				<!--<input type="hidden" name="menuId" id="menuId" value="">-->
-				<!--<input type="hidden" name="subMenuId" id="subMenuId" value="">-->
 				<td><?php foreach($getMenu as $menu) if($menu['id']== $data['menuId'])echo $menu['name']; ?></td>
 				<td><?php foreach($getSubMenu as $subMenu) if($subMenu['id']== $data['subMenuId'])echo $subMenu['name']; ?></td>
                                 <td><?php echo $data['name']; ?></td>
-				<td><img class=""  style="height: 75px;width: 105px;" src="<?php echo base_url("upload/item/".$data['image']);?>" ></td>
+				<td><img class=""  style="height: 75px;width: 105px;" src="<?php echo $data['image']; ?>" ></td>
 				<td><?php echo $data['price']; ?></td>
 				<td><?php echo $data['tax']; ?></td>
 				<td><?php echo $data['offers']; ?></td>

@@ -34,11 +34,11 @@ Modified on: 24/03/15
 		<div class="panel-body">
 		     <div id="alert"></div>
 		   <?php foreach($getSubMenuItemEdit as $item)?>
-		    <div class="col-md-offset-1 col-md-8">
+		    <div class="col-md-offset-1 col-md-12">
 			<form id="form_validation" method="POST" enctype="multipart/form-data" action="<?php echo base_url('branboxController/subMenuItemEdit/'.$menuId."/".$subMenuId."/".$item['id']); ?>" class="form-horizontal form12">
 			    <div class="form-group">
 				<label class="col-md-3 control-label">Menu Name</label>
-				<div class="col-md-5">
+				<div class="col-md-3">
 				    <select name="menuId" id="menuId" class="form-control">
 					<option selected="" disabled="">Select Menu</option>
 					<?php foreach($getMenu as $data) {?>
@@ -49,7 +49,7 @@ Modified on: 24/03/15
 			    </div>
 			     <div class="form-group">
 				<label class="col-md-3 control-label">Sub Menu Name</label>
-				<div class="col-md-5">
+				<div class="col-md-3">
 				    <select name="subMenuId" id="subMenuId" class="form-control">
 					<option selected="" disabled="">Select Sub Menu</option>
 					<?php foreach($getSubMenu as $data) {?>
@@ -60,15 +60,15 @@ Modified on: 24/03/15
 			    </div>
 			    <div class="form-group">
 				<label class="col-md-3 control-label">Sub Menu Item Name</label>
-				<div class="col-md-5">
+				<div class="col-md-3">
 				    <input type="text" name="name" id="name" value="<?php echo $item['name']; ?>" class="form-control" placeholder="Sub Menu Name" />
 				</div>
 			    </div>
 			    <div class="form-group">
 				<label class="col-md-3 control-label">Sub Menu Item Image</label>
-				<div class="col-md-5">
+				<div class="col-md-3">
 				     <input type="hidden" name="oldImage" id="" value="<?php echo $item['image']?>" >
-				    <img class="media-object superbox-img previewimage" id="show_image11" name="show_image" src="<?php echo base_url("upload/item/".$item['image']);?>">
+				    <img class="media-object superbox-img previewimage" id="show_image11" name="show_image" src="<?php echo $item['image'];?>">
 				     <input id="filestyle-11" class="filestyle" type="file" name='image' onchange="PreviewImage();" data-buttonbefore="true" style="position: absolute; clip: rect(0px, 0px, 0px, 0px);" tabindex="-1">
 				    <div class="bootstrap-filestyle input-group">
 					<span class="group-span-filestyle input-group-btn" tabindex="0">
@@ -77,7 +77,7 @@ Modified on: 24/03/15
 						Choose file
 					    </label>
 					</span>
-					<input class="form-control" id="filestyle-21" value="<?php echo $item['image']; ?>" type="text" readonly>
+					<input class="form-control" id="filestyle-21" value="<?php $data=explode("/",$item['image']); $count=count($data);  echo $data[$count-1]; ?>" type="text" readonly>
 				    </div>
 				    
 				</div>
@@ -106,7 +106,7 @@ Modified on: 24/03/15
 			<!--    </div>-->
 			     <div class="form-group">
 				<label class="col-md-3 control-label">Item Price</label>
-				<div class="col-md-5">
+				<div class="col-md-3">
 				    <input type="text" name="price" id="price" value="<?php echo $item['price']; ?>" class="form-control"  placeholder="Price" />
 				</div>
 			    </div>
@@ -119,13 +119,13 @@ Modified on: 24/03/15
 			<!--    </div>-->
 			    <div class="form-group">
 				<label class="col-md-3 control-label">Item Tax</label>
-				<div class="col-md-5">
+				<div class="col-md-3">
 				    <input type="text" name="tax" id="tax" class="form-control" value="<?php echo $item['tax']; ?>"  placeholder="Tax" />
 				</div>
 			    </div>
 			    <div class="form-group">
 				<label class="col-md-3 control-label">Item Offers</label>
-				<div class="col-md-5">
+				<div class="col-md-3">
 				    <input type="text" name="offers" id="offers" class="form-control" value="<?php echo $item['offers']; ?>" placeholder="Offers" />
 				</div>
 			    </div>
@@ -156,14 +156,59 @@ Modified on: 24/03/15
 				    
 				</div>
 			    </div>
-			    <div class="form-group">
+			  <!--  <div class="form-group">
 				<label class="col-md-3 control-label">Item Ingredients</label>
 				<div class="col-md-3 checkbox">
 				    <button type="button" class="btn btn-primary btn-sm addButton" data-template="textbox"><i class="fa fa-plus"></i></button>
 				</div>
-			    </div>
-			    <?php foreach($getSubMenuItemGIngrediantEdit as $ing) { ?>
-			    <div class="form-group odd" >
+			    </div>-->
+			    
+			    			    	<div class="table-responsive col-md-8" >
+					<table class="table table-bordered">
+					    <thead>
+						<tr>
+						    <th>Ingredients</th>
+						    <th>price</th>
+						    <th>catogory</th>
+						    <th><button type="button" class="btn btn-primary btn-sm addButton" data-template="textbox"><i class="fa fa-plus"></i></button></th>
+						</tr>
+					    </thead>
+					    <tbody>
+						 <?php foreach($getSubMenuItemGIngrediantEdit as $ing) { ?>
+						<tr class="odd">
+						    <input type="hidden" name="ingredientsId[]" id="ingredientsId" value="<?php echo $ing['id']; ?>" class="form-control" />
+						    <td><span><input type="text" name="ingredients[]" id="ingredients" class="form-control"  value="<?php echo $ing['ingredients']; ?>"   placeholder="ingredients"/></span></td>
+						    <td><span><input type="text" name="ingPrice[]" id="ingPrice" class="form-control" value="<?php echo $ing['price']; ?>"  placeholder="Price"/></span></td>
+						    <td><span><select  class="form-control" name="category[]">
+							    <option selected disabled>select</option>
+							    <option value="base" <?php if($ing['category']=="base")echo "selected"; ?> >Base</option>
+							    <option value="default" <?php if($ing['category']=="default")echo "selected"; ?>>default</option>
+							    <option value="addon" <?php if($ing['category']=="addon")echo "selected"; ?>>Addon</option>
+							</select></span>
+						    </td>
+						    <td><a href="<?php echo site_url("branboxController/subMenuItemIngrediantsDelete/".$ing['id']."/".$ing['menuId']."/".$ing['subMenuId']."/".$ing['itemId']) ?>" id="delete_box"><button type="button" class="btn btn-remove btn-danger btn-sm " data-template="textbox"><i class="fa fa-trash"></i></button></a></td>
+						</tr>
+						  <?php } ?>
+						<tr class="odd hide" id="optionTemplate">
+						    <input type="hidden" name="ingredients1[]" id="" class="form-control"  placeholder="" />
+						    <td><span><input type="text" name="ingredients[]" id="ingredients" class="form-control"  placeholder="ingredients"/></span></td>
+						    <td><span><input type="text" name="ingPrice[]" id="ingPrice" class="form-control"  placeholder="Price"/></span></td>
+						    <td><span><select  class="form-control" name="category[]">
+							<option  selected disabled >select</option>
+							<option value="base">Base</option>
+							<option value="default">Default</option>
+							<option value="addon">Addon</option>
+						    </select></span></td>
+						    
+						    <td><button type="button" class="btn btn-danger btn-sm removeButton" onclick="removerow($(this));" data-template="textbox"><i class="fa fa-trash"></i></button></td>
+						</tr>
+					    </tbody>
+					</table>
+				    </div>
+
+			    
+			    <?php //foreach($getSubMenuItemGIngrediantEdit as $ing) { ?>
+			    <!--<div class="form-group odd" >
 				<label class="col-md-3 control-label"></label>
 				<div class="col-md-8">
 				    <div class="col-md-6">
@@ -180,13 +225,13 @@ Modified on: 24/03/15
 				<div class="col-md-1 checkbox">
 				    <a href="<?php echo site_url("branboxController/subMenuItemIngrediantsDelete/".$ing['id']."/".$ing['menuId']."/".$ing['subMenuId']."/".$ing['itemId']) ?>" id="delete_box"><button type="button" class="btn btn-remove btn-danger btn-sm " data-template="textbox"><i class="fa fa-trash"></i></button></a>
 				</div>
-			    </div>
-			    <?php } ?>
-			    <div class="form-group odd hide" id="optionTemplate">
+			    </div>-->
+			    <?php //} ?>
+			   <!-- <div class="form-group odd hide" id="optionTemplate">
 				<label class="col-md-3 control-label"></label>
 				<div class="col-md-8">
 				    <div class="col-md-6">
-					<input type="text" name="ingredients1[]" id="ingredients" class="form-control"  placeholder="ingredients" />
+					<input type="hidden" name="ingredients1[]" id="ingredients" class="form-control"  placeholder="ingredients" />
 				    </div>
 				    <div class="col-md-6">
 					<label class="col-md-2 control-label">Price</label>
@@ -198,7 +243,7 @@ Modified on: 24/03/15
 				<div class="col-md-1 checkbox">
 				    <button type="button" class="btn btn-danger btn-sm removeButton" onclick="removerow($(this));" data-template="textbox"><i class="fa fa-trash"></i></button>
 				</div>
-			    </div>
+			    </div>-->
 			     
 			     
 			   <div class="col-md-offset-6 col-md-12">
@@ -304,6 +349,31 @@ $(document).ready(function() {
                     }
                 }
             },
+	    "ingredients[]":{
+		group:"td",
+		 validators: {
+                    notEmpty: {
+                        message: 'It is required and can\'t be empty'
+                    }
+                }
+	    },
+	    "ingPrice[]":{
+		group:"td",
+		 validators: {
+                    notEmpty: {
+                        message: 'It is required and can\'t be empty'
+                    }
+                }
+	    },
+	    
+	    "category[]":{
+		group:"td",
+		 validators: {
+                    notEmpty: {
+                        message: 'It is required and can\'t be empty'
+                    }
+                }
+	    }
 	}
     });
 });
@@ -410,6 +480,12 @@ function unLoader() {
     $(".addButton").click(function(){
     var $template = $('#optionTemplate');
     $clone    = $template.clone().removeClass('hide').removeAttr('id').insertBefore($template);
+    $name   = $clone.find('[name="ingredients[]"]');
+	$('#form_validation').bootstrapValidator('addField', $name);
+	$name   = $clone.find('[name="ingPrice[]"]');
+	$('#form_validation').bootstrapValidator('addField', $name);
+	$name   = $clone.find('[name="category[]"]');
+	$('#form_validation').bootstrapValidator('addField', $name);
     });
     
     function removerow($this){

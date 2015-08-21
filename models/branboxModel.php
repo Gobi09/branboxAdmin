@@ -310,7 +310,7 @@ class branboxModel extends CI_Model {
 	$this->load->library('upload', $config);
 	$this->upload->do_upload('image');
 	$path =  $this->upload->data();
-	$path1=$path['file_name'];
+	$path1=base_url().$url.$path['file_name'];
 	
 	if($this->input->post("status")!="ON")
 	{
@@ -355,7 +355,7 @@ class branboxModel extends CI_Model {
 	$this->load->library('upload', $config);
 	$this->upload->do_upload('image');
 	$path =  $this->upload->data();
-	$path1=$path['file_name'];
+	$path1=base_url().$url.$path['file_name'];
 	}
 	
 	
@@ -436,7 +436,7 @@ class branboxModel extends CI_Model {
 	$this->load->library('upload', $config);
 	$this->upload->do_upload('image');
 	$path =  $this->upload->data();
-	$path1=$path['file_name'];
+	$path1=base_url().$url.$path['file_name'];
 	if($this->input->post("status")!="ON")
 	{
 	    $status="OFF";
@@ -481,7 +481,7 @@ class branboxModel extends CI_Model {
 	    $this->load->library('upload', $config);
 	    $r=$this->upload->do_upload('image');
 	    $data =  $this->upload->data();
-	    $logo=$data['file_name'];
+	    $logo=base_url().$url.$data['file_name'];
 	}
 	
 	
@@ -612,7 +612,8 @@ class branboxModel extends CI_Model {
 		"subMenuId"=>$this->input->post("subMenuId"),
 		"itemId"=>$insert_id,
 		"ingredients"=>$_POST['ingredients'][$i],
-		"price"=>$_POST['ingPrice'][$i]
+		"price"=>$_POST['ingPrice'][$i],
+		"category"=>$_POST['category'][$i]
 	    );
 	    $this->db->insert("ingredients",$dataingredients);
 	    //echo "<pre>";
@@ -639,7 +640,7 @@ class branboxModel extends CI_Model {
 	    $this->load->library('upload', $config);
 	    $r=$this->upload->do_upload('image');
 	    $data =  $this->upload->data();
-	    $logo=$data['file_name'];
+	    $logo=base_url().$url.$data['file_name'];
 	}
 	
 	
@@ -684,6 +685,8 @@ class branboxModel extends CI_Model {
 	{
 	    $dataingredients=array(
 		"ingredients"=>$_POST['ingredients'][$i],
+		"price"=>$_POST['ingPrice'][$i],
+		"category"=>$_POST['category'][$i]
 	    );
 	    $this->db->where('businessId',$businessId);
 	    $this->db->where('id',$_POST['ingredientsId'][$i]);
@@ -701,8 +704,9 @@ class branboxModel extends CI_Model {
 		"menuId"=>$menuId,
 		"subMenuId"=>$subMenuId,
 		"itemId"=>$itemId,
-		"ingredients"=>$_POST['ingredients1'][$i],
-		"price"=>$_POST['ingPrice1'][$i]
+		"ingredients"=>$_POST['ingredients'][$i],
+		"price"=>$_POST['ingPrice'][$i],
+		"category"=>$_POST['category'][$i]
 	    );
 	    $this->db->insert("ingredients",$dataingredients);
 	    //echo "<pre>";
