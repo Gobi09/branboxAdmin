@@ -47,9 +47,18 @@ class branboxModel extends CI_Model {
 	//echo $sql="select t1.*,t2.* FROM booktable t1 join itemorder t2 on t1.businessId = t2.businessId where t1.businessId = '$businessId' and t1.status='requested' and t2.status='requested'";
 	//$query['data'] = $this->db->query($sql, $return_object = TRUE)->result_array();
 	//
-	$sql= "SELECT s.id,s.itemId,s.endUserId,s.quantity,s.totalPrice,s.currencyFormat,s.createdTime,s.status, j.userName,j.address1,j.address2,j.city,j.state,j.country,j.postalCode,j.phoneNumber FROM itemorder s INNER JOIN enduser j ON s.businessId = j.businessId  and s.endUserId= j.id where  s.status='ordered'";
+	
+	$sql="select s.*,j.*  FROM orderItemCount s join enduser j ON s.businessId = j.businessId  and s.userId= j.id  where s.businessId = '$businessId' and s.status='ordered' and s.timedDelivery='NO'";
+	$query['tot'] = $this->db->query($sql, $return_object = TRUE)->result_array();
+	
+	$sql="select s.*,j.*  FROM orderItemCount s join enduser j ON s.businessId = j.businessId  and s.userId= j.id  where s.businessId = '$businessId' and s.status='ordered' and s.timedDelivery='YES'";
+	$query['totTimed'] = $this->db->query($sql, $return_object = TRUE)->result_array();
+	
+	
+	$sql= "SELECT s.id,s.itemId,s.endUserId,s.quantity,s.totalPrice,s.currencyFormat,s.createdTime,s.status, j.userName,j.address1,j.address2,j.city,j.state,j.country,j.postalCode,j.phoneNumber FROM itemorder s INNER JOIN enduser j ON s.businessId = j.businessId  and s.endUserId= j.id where  s.status='ordered' and s.timedDate='o' and s.timtedTime='o'";
 	
 	//$sql="select *  FROM itemorder where businessId = '$businessId' and status='ordered'";
+	//$sql="select *  FROM orderitemcount where businessId = '$businessId' and status='ordered'";
 	$query['data1'] = $this->db->query($sql, $return_object = TRUE)->result_array();
 	
 	
@@ -64,33 +73,36 @@ class branboxModel extends CI_Model {
 	return $query;
     }
     
-    public function orderAcceptance($id,$userId,$itemId,$table)
+    public function orderAcceptance($id,$table)
     {
 	$businessId=$this->session->userdata('businessId');
 	
+	$sql="select *  FROM business where businessId = '$businessId'";
+	$query['data3'] = $this->db->query($sql, $return_object = TRUE)->result_array();
 	
 	if($table=='o')
 	{
-	    //$sql= "select t1.*,t2.* FROM submenuitem t1 join itemorder t2 on  t1.id = t2.itemId and t2.businessId = t1.businessId and t2.id='$id'  and t2.endUserId='$userId' where t2.businessId='$businessId'and t2.itemId='$itemId' ";
-	    //$sql="SELECT s.price,s.quantity,s.createdTime,s.status, i.name, i.image FROM itemorder s INNER JOIN submenuitem i ON i.id = s.itemId and i.businessId=s.businessId";
-	    //$data= $this->db->query($sql, $return_object = TRUE)->result_array();
+	    
+	    
+	    $sql= "select t1.*,t2.*,t3.userName,t3.address1,t3.address2,t3.city,t3.state,t3.country,t3.postalCode,t3.phoneNumber,t3.email FROM submenuitem t1 join itemorder t2 on  t1.id = t2.itemId join enduser t3 on t2.endUserId=t3.id and t2.businessId = t1.businessId and t3.id='$id' where t2.businessId='$businessId' and t2.status='ordered' and t2.timedDate='$table' ";
+	    $query['data1'] = $this->db->query($sql, $return_object = TRUE)->result_array();
+	   
+	    
 	    //echo "<pre>";
-	    //echo $sql;
-	    //print_r($data);
+	    //print_r($query);
 	    //echo "</pre>";
 	    //exit;
+	    return $query;
+	   
+	}
+	
+	if($table=='t')
+	{
 	    
-	    //$sql= "SELECT s.id,s.itemId,s.endUserId,s.quantity,s.totalPrice,s.currencyFormat,s.createdTime,s.status, i.menuId,i.subMenuId,i.name,i.image,i.price,i.garnish,i.tax,i.offers, j.userName,j.address1,j.address2,j.city,j.state,j.country,j.postalCode,j.phoneNumber FROM itemorder s INNER JOIN submenuitem i ON i.id = s.itemId INNER JOIN enduser j ON s.endUserId= j.id where i.businessId=s.businessId and s.businessId='$businessId' ";
 	    
-	    
-	    $sql= "select t1.*,t2.*,t3.userName,t3.address1,t3.address2,t3.city,t3.state,t3.country,t3.postalCode,t3.phoneNumber,t3.email FROM submenuitem t1 join itemorder t2 on  t1.id = t2.itemId join enduser t3 on t2.endUserId=t3.id and t2.businessId = t1.businessId and t2.id='$id'  and t2.endUserId='$userId' where t2.businessId='$businessId'and t2.itemId='$itemId' ";
+	    $sql= "select t1.*,t2.*,t3.userName,t3.address1,t3.address2,t3.city,t3.state,t3.country,t3.postalCode,t3.phoneNumber,t3.email FROM submenuitem t1 join itemorder t2 on  t1.id = t2.itemId join enduser t3 on t2.endUserId=t3.id and t2.businessId = t1.businessId and t3.id='$id' where t2.businessId='$businessId' and t2.status='ordered' and t2.timedDate<>'o' ";
 	    $query['data1'] = $this->db->query($sql, $return_object = TRUE)->result_array();
-	    
-	    //$sql="select *  FROM enduser where businessId = '$businessId' and id='$userId'";
-	    //$query['data2'] = $this->db->query($sql, $return_object = TRUE)->result_array();
-	    
-	    $sql="select *  FROM business where businessId = '$businessId'";
-	    $query['data3'] = $this->db->query($sql, $return_object = TRUE)->result_array();
+	   
 	    
 	    //echo "<pre>";
 	    //print_r($query);
@@ -121,23 +133,132 @@ class branboxModel extends CI_Model {
 	} 
 	
     }
+    
+    public function getIngredients($id,$table)
+    {
+	if($table=='t')
+	{
+	    $timedDelivery='YES';
+	}
+	else
+	{
+	    $timedDelivery='NO';
+	}
+	
+	$businessId=$this->session->userdata('businessId');
+	$sql="SELECT s . * , j . * FROM ingredients s JOIN orderitemingredients j ON s.businessId = j.businessId and s.id=j.ingId where s.businessId='$businessId' AND j.timedDelivery='$timedDelivery'";
+	return $this->db->query($sql, $return_object = TRUE)->result_array();
+    }
     //getMessage End
+    
+    
     
     //Order Approve Start
     public function orderApproved($id,$userId,$itemId,$table)
     {
 	$businessId=$this->session->userdata('businessId');
+	
 	if($table="o")
 	{
-	    $form_data=array(
-		    'status'=>"Approved"
-		    );
-	    $this->db->where('id',$id);
-	    $this->db->where('endUserId',$userId);
-	    $this->db->where('itemId',$itemId);
-	    $this->db->where('businessId',$businessId);
-	    $this->db->update('itemorder', $form_data);
+	    
+	    $sql="select *  FROM itemorder where businessId = '$businessId' and endUserId='$userId' and status='ordered' and timedDate='$table'";
+	    $query['data'] = $this->db->query($sql, $return_object = TRUE)->result_array();
+	    
+	    $sql="select *  FROM orderItemCount where businessId = '$businessId' and userId='$userId'and status='ordered' and timedDelivery='NO'";
+	    $query['data1'] = $this->db->query($sql, $return_object = TRUE)->result_array();
+	    
+	   
+	    for($i=0; $i<count($_POST['dateTime']); $i++ )
+	    {
+		  
+		foreach($query['data'] as $data)
+		{
+		    
+		    if($_POST['dateTime'][$i]==$data['createdTime'])
+		    {
+			
+			$id=$data['id'];
+			$endUserId=$data['endUserId'];
+			$itemId=$data['itemId'];
+			
+			$sql="UPDATE itemorder SET status='Approved' WHERE id='$id' and endUserId='$endUserId' and itemId='$itemId' and businessId='$businessId' and timedDate='o'";
+			$datatabel=$this->db->query($sql);
+		    }
+		}
+	    }
+	    
+	    for($j=0; $j<count($_POST['dateTime']); $j++ )
+	    {
+		foreach($query['data1'] as $data1)
+		{
+		    if($_POST['dateTime'][$j]==$data1['createdTime'])
+		    {
+			$form_data=array(
+			    'status'=>"Approved"
+			    );
+			$sql="UPDATE orderitemcount SET status='Approved' WHERE userId='$userId' and businessId='$businessId' and timedDelivery='NO'";
+			$datatabel=$this->db->query($sql);
+			
+		    }
+		}
+	    }
+	   // print_r($datatabel);
+	    //exit;
 	}
+	
+	if($table="t")
+	{
+	    
+	    $sql="select *  FROM itemorder where businessId = '$businessId' and endUserId='$userId' and status='ordered'  and timedDate <> 'o' ";
+	    $query['data'] = $this->db->query($sql, $return_object = TRUE)->result_array();
+	    
+	    $sql="select *  FROM orderItemCount where businessId = '$businessId' and userId='$userId'and status='ordered' and timedDelivery='YES'";
+	    $query['data1'] = $this->db->query($sql, $return_object = TRUE)->result_array();
+	    
+	   
+	    for($i=0; $i<count($_POST['dateTime']); $i++ )
+	    {
+		  
+		foreach($query['data'] as $data)
+		{
+		    
+		    if($_POST['dateTime'][$i]==$data['createdTime'])
+		    {
+			$id=$data['id'];
+			$endUserId=$data['endUserId'];
+			$itemId=$data['itemId'];
+			
+			$form_data=array(
+			    'status'=>"Approved"
+			    );
+			$sql="UPDATE itemorder SET status='Approved' WHERE id='$id' and endUserId='$endUserId' and itemId='$itemId' and businessId='$businessId' and timedDate<>'o'";
+			$datatabel=$this->db->query($sql);
+			
+		    }
+		}
+	    }
+	    
+	    for($j=0; $j<count($_POST['dateTime']); $j++ )
+	    {
+		foreach($query['data1'] as $data1)
+		{
+		    if($_POST['dateTime'][$j]==$data1['createdTime'])
+		    {
+			$form_data=array(
+			    'status'=>"Approved"
+			    );
+			$this->db->where('userId',$userId);
+			$this->db->where('businessId',$businessId);
+			$this->db->where('timedDelivery','YES');
+			$this->db->update('orderitemcount', $form_data);
+		    }
+		}
+	    }
+	   // print_r($datatabel);
+	    //exit;
+	}
+	
+	
 	if($table="b")
 	{
 	    $form_data=array(
@@ -148,6 +269,9 @@ class branboxModel extends CI_Model {
 	    $this->db->where('businessId',$businessId);
 	    $this->db->update('booktable', $form_data);
 	}
+
+	
+	
     }
     //Order Approve End
     
@@ -272,9 +396,34 @@ class branboxModel extends CI_Model {
 	$sql="SELECT * FROM menu where businessId='$businessId' ORDER BY position ";
 	return $query = $this->db->query($sql)->result_array();
     }
+    //timed Notification
+    public function getTimedNotificationCount($businessId)
+    {
+	$sql1="SELECT count(id) FROM itemorder where businessId='$businessId' and status='ordered' AND timedDate !='o'";
+        $itemorder['item'] = $this->db->query($sql1)->result_array();
+	$sql2="SELECT count(id) FROM booktable where businessId='$businessId' and status='ordered'";
+        $itemorder['table'] = $this->db->query($sql2)->result_array();
+	//$count1=$itemorder1[0]['count(id)'];
+	//$count2=$itemorder2[0]['count(id)'];
+	//print_r($itemorder);
+	return $itemorder;
+    }
+    public function getTimedNotification($businessId)
+    {
+	$sql="SELECT oldordertotal FROM totalorder where businessid='$businessId'";
+        $itemorder = $this->db->query($sql)->result_array();
+	return $count=$itemorder[0]['oldordertotal'];
+    }
+    public function updateTimedNotification($count,$businessId)
+    {
+	$sql= "UPDATE totalorder SET newordertotal='$count', oldordertotal='$count' WHERE businessid ='$businessId'";	
+	return $this->db->query($sql);
+    }
+    
+    //Order notification
     public function getOrderNotificationCount($businessId)
     {
-	$sql1="SELECT count(id) FROM itemorder where businessId='$businessId' and status='ordered'";
+	$sql1="SELECT count(id) FROM itemorder where businessId='$businessId' and status='ordered' and timedDate='o'";
         $itemorder['item'] = $this->db->query($sql1)->result_array();
 	$sql2="SELECT count(id) FROM booktable where businessId='$businessId' and status='ordered'";
         $itemorder['table'] = $this->db->query($sql2)->result_array();
@@ -285,7 +434,7 @@ class branboxModel extends CI_Model {
     }
     public function getOrderNotification($businessId)
     {
-	$sql="SELECT oldordertotal FROM totalorder where businessid='$businessId'";
+	$sql="SELECT oldordertotal FROM totalorder where businessid='$businessId' and notiyFor='o' ";
         $itemorder = $this->db->query($sql)->result_array();
 	return $count=$itemorder[0]['oldordertotal'];
     }
@@ -921,32 +1070,53 @@ class branboxModel extends CI_Model {
      // Offer Start
     function offerView()
     {
+	$date=date('Y-m-d');
 	$businessId=$this->session->userdata('businessId');
-	$sql="SELECT * FROM offer where businessId=$businessId";
-	return $this->db->query($sql, $return_object = TRUE)->result_array();
+	//$sql="SELECT * FROM offer where businessId='$businessId' and Date(validUptodate) >= '$date' " ;
+	
+	$sql="SELECT o.*, i.name FROM offer o join submenuitem i on o.itemId=i.id where o.businessId='$businessId' and o.status='ON' and Date(o.validUptodate) >= '$date' " ;
+	$return =$this->db->query($sql, $return_object = TRUE)->result_array();
+	//echo "<pre>";
+	//print_r($return );
+	//exit;
 	//   
 	//$this->db->where('businessId', $businessId); 
 	//$sql= $this->db->get("offer");
 	//return $sql->result_array();
     }
+     function ajaxTableStatus($offerId)
+    {
+	$businessId=$this->session->userdata('businessId');
+	$sql="SELECT * FROM offer where businessId=$businessId and id='$offerId'";
+	return $this->db->query($sql, $return_object = TRUE)->result_array();
+    }
+    
     
     function offerAdd()
     {
 	$businessId=$this->session->userdata('businessId');
-	
-	$url=$config['upload_path'] ='upload/offer/';
-	$config['allowed_types'] = 'gif|jpg|png';
-	$this->load->library('upload', $config);
-	$this->upload->do_upload('image');
-	$data =$this->upload->data();
-	$logo=$data['file_name'];
-	
+	if($this->input->post('status')=="ON")
+	{
+	$STATUS='ON';
+	}
+	else
+	{
+	$STATUS='OFF';
+	}
+	$datas=explode("s",$this->input->post('itemId'));
 	$data = array
 	(
 	    'businessId'  =>$businessId,
 	    'title'       =>$this->input->post('title'),
-	    'image'       =>$logo,
-	    'Description' =>$this->input->post('description')
+	    'menuId'       =>$datas[1],
+	    'subMenuId'       =>$datas[2],
+	    'ItemId'       =>$datas[0],
+	    'price'       =>$this->input->post('price'),
+	    'image'       =>$datas[3],
+	    'validFromdate'       =>$this->input->post('validFromdate'),
+	    'validUptodate'       =>$this->input->post('validUptodate'),
+	    'Description' =>$this->input->post('description'),
+	    'status'=>$STATUS
 	);
 	return $this->db->insert('offer',$data);
     }
@@ -962,24 +1132,31 @@ class branboxModel extends CI_Model {
     
     function offerUpdate($id)
     {
-	if($_FILES["image"]["name"]!="")
+	if($this->input->post('status')=="ON")
 	{
-	    $url=$config['upload_path'] ='upload/offer/';
-	    $config['allowed_types'] = 'gif|jpg|png';
-	    $this->load->library('upload', $config);
-	    $this->upload->do_upload('image');
-	    $data =  $this->upload->data();
-	    $filename=$data['file_name'];
+	$STATUS='ON';
 	}
 	else
 	{
-	    $filename=$this->input->post('oldfile');
+	$STATUS='OFF';
 	}
+	
+	$businessId=$this->session->userdata('businessId');
+	
+	$datas=explode("s",$this->input->post('itemId'));
 	$data = array
 	(
+	    
 	    'title'       =>$this->input->post('title'),
-	    'image'       =>$filename,
-	    'Description' =>$this->input->post('description')
+	    'menuId'       =>$datas[1],
+	    'subMenuId'       =>$datas[2],
+	    'ItemId'       =>$datas[0],
+	    'price'       =>$this->input->post('price'),
+	    'image'       =>$datas[3],
+	    'validFromdate'       =>$this->input->post('validFromdate'),
+	    'validUptodate'       =>$this->input->post('validUptodate'),
+	    'Description' =>$this->input->post('description'),
+	    'status'=>$STATUS
 	);
 	$businessId=$this->session->userdata('businessId');
 	$this->db->where('businessId', $businessId); 
@@ -1022,6 +1199,9 @@ class branboxModel extends CI_Model {
     
     function aboutUsUpdate()
     {
+	echo "<pre>";
+	print_r($_POST);
+	exit;
 	
 	if($_FILES["image"]["name"]!="")
 	{
@@ -1067,14 +1247,20 @@ class branboxModel extends CI_Model {
     function orderedItem()
     {
 	$businessId=$this->session->userdata('businessId');
-	$sql= "SELECT s.id,s.itemId,s.endUserId,s.quantity,s.totalPrice,s.currencyFormat,s.createdTime,s.status, i.menuId,i.subMenuId,i.name,i.image,i.price,i.garnish,i.tax,i.offers, j.userName,j.address1,j.address2,j.city,j.state,j.country,j.postalCode,j.phoneNumber FROM itemorder s INNER JOIN submenuitem i ON i.id = s.itemId INNER JOIN enduser j ON s.endUserId= j.id where i.businessId=s.businessId and s.businessId='$businessId'";
+	//$sql="select  from itemorder itm join orderitemcount oitm on itm"
+	
+	$sql="select s.*,j.*  FROM orderItemCount s join enduser j ON s.businessId = j.businessId  and s.userId= j.id  where s.businessId = '$businessId' and s.timedDelivery='NO'";
+	return $this->db->query($sql, $return_object = TRUE)->result_array();
+	
+	
+	$sql= "SELECT s.id,s.itemId,s.endUserId,s.quantity,s.totalPrice,s.currencyFormat,s.createdTime,s.status,s.timedDate, i.menuId,i.subMenuId,i.name,i.image,i.price,i.garnish,i.tax,i.offers, j.userName,j.address1,j.address2,j.city,j.state,j.country,j.postalCode,j.phoneNumber FROM itemorder s INNER JOIN submenuitem i ON i.id = s.itemId INNER JOIN enduser j ON s.endUserId= j.id where i.businessId=s.businessId and s.businessId='$businessId'";
 	return $this->db->query($sql, $return_object = TRUE)->result_array();
     }
     function itemorderDelete($id,$endUserId)
     {
 	$businessId=$this->session->userdata('businessId');
 	$this->db->where('businessId', $businessId); 
-	$this->db->where('id', $id);
+	//$this->db->where('id', $id);
 	$this->db->where('endUserId', $endUserId);
 	$this->db->delete('itemorder');
     }

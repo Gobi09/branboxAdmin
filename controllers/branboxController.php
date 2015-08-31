@@ -13,8 +13,8 @@ class branboxController extends CI_Controller {
 	    'protocol' => 'smtp',
 	    'smtp_host' => 'ssl://smtp.googlemail.com',
 	    'smtp_port' => 465,
-	    'smtp_user' => 'ppkk036@gmail.com', 
-	    'smtp_pass' => '12619892233', 
+	    'smtp_user' => 'gobichan09@gmail.com', 
+	    'smtp_pass' => 'gobigobigobi', 
 	    'mailtype' => 'html',
 	    'charset' => 'iso-8859-1',
 	    'wordwrap' => TRUE
@@ -215,31 +215,26 @@ class branboxController extends CI_Controller {
     }
     //Authentication Controllers END
    
+   public function getMessageCount()
+   {
+	$result=$this->branboxModel->getMessage();
+	$count=count($result['tot']);
+	echo '{"count":"'.$count.'"}';
+   }
+   
    public function getMessage()
    {
 	$result=$this->branboxModel->getMessage();
-	//print_r($result);
-	
 	
 	?>
-	<!--<li class="dropdown">-->
-	    <a href="javascript:;" data-toggle="dropdown" class="dropdown-toggle f-s-14">
-		<?php if($result['data4']!=0){?>
-		<i class="fa fa-envelope"></i>
-		<span class="label"><?php echo $result['data4'];?></span>
-		<?php }?>
-	    </a>
-	    <div></div>
-	    <ul class="dropdown-menu media-list pull-right animated fadeInDown">
-		<li class="dropdown-header">Notifications (<?php echo $result['data4'];?>)</li>
-		<?php foreach($result['data1'] as $data1) {?>
+	<li class="dropdown-header">Order Notifications (<?php echo count($result['tot']);?>)</li>
+		<?php foreach($result['tot'] as $data1){?>
 		
 		<li class="media">
-		    <a href="<?php echo base_url('branboxController/orderAcceptance/'.$data1['id']."/".$data1['endUserId']."/".$data1['itemId']."/o"); ?>">
-			<!--<div class="media-left"><i class="fa fa-bug media-object bg-red"></i></div>-->
+		    <a href="<?php echo base_url('branboxController/orderAcceptance/'.$data1['id']."/o"); ?>">
 			<div class="media-body">
 			    <h6 class="media-heading"> <?php echo $data1['userName']; ?></h6>
-			     <p>Ordered the Food. Order Id:<?php echo $data1['itemId'];?></p>
+			     <p>Ordered <?php echo $data1['count'];?> Food.</p>
 			</div>
 		    </a>
 		</li>
@@ -247,7 +242,6 @@ class branboxController extends CI_Controller {
 		<?php foreach($result['data2'] as $data2) { ?>
 		<li class="media">
 		    <a href="<?php echo base_url('branboxController/orderAcceptance/'.$data2['id']."/".$data2['endUserId']."/0/b"); ?>">
-			<!--<div class="media-left"><img src="assets/img/user-1.jpg" class="media-object" alt="" /></div>-->
 			<div class="media-body">
 			    <h6 class="media-heading"> <?php echo $data2['userName']; ?></h6>
 			    <p>Booking The Table. Booking Order Id:<?php echo $data2['tableId'];?></p>
@@ -255,12 +249,35 @@ class branboxController extends CI_Controller {
 		    </a>
 		</li>
 		<?php } ?>
-	    </ul>
-	<!--</li>-->
 	<?php
 	
+    }
+     public function getTimedMessageCount()
+   {
+	$result=$this->branboxModel->getMessage();
+	$count=count($result['totTimed']);
+	echo '{"count":"'.$count.'"}';
    }
    
+    public function getTimedMessage()
+   {
+	$result=$this->branboxModel->getMessage();
+	
+	?>
+	<li class="dropdown-header">Order Notifications (<?php echo count($result['totTimed']);?>)</li>
+		<?php foreach($result['totTimed'] as $data1){?>
+		<li class="media">
+		    <a href="<?php echo base_url('branboxController/orderAcceptance/'.$data1['id']."/t"); ?>">
+			<div class="media-body">
+			    <h6 class="media-heading"> <?php echo $data1['userName']; ?></h6>
+			     <p>Ordered <?php echo $data1['count'];?> Food.</p>
+			</div>
+		    </a>
+		</li>
+		<?php }?>
+	<?php
+	
+    }
    
     public function dashboard()
     {
@@ -300,16 +317,18 @@ class branboxController extends CI_Controller {
 	}
     
     }
-    public function orderAcceptance($id,$userId,$itemId,$table)
+    public function orderAcceptance($id,$table)
     {
-	
-	
-	$result=$this->branboxModel->orderAcceptance($id,$userId,$itemId,$table);
+	$result=$this->branboxModel->orderAcceptance($id,$table);
+	$result['getIngredients']=$this->branboxModel->getIngredients($id,$table);
+	//echo "<pre>";
+	//print_r($result);
+	//exit;
 	$this->session->set_userdata('table',$table);
 		   
 	if($_POST['approve'])
 	{
-	    $result=$this->branboxModel->orderAcceptance($id,$userId,$itemId,$table);
+	    $result=$this->branboxModel->orderAcceptance($id,$table);
 	    //echo "<pre>";
 	    //print_r($result);
 	    //echo "</pre>";
@@ -324,11 +343,11 @@ class branboxController extends CI_Controller {
 	    $pdf->Output($pdfFilePath, "f");
 	    
 	    $this->branboxModel->orderApproved($id,$userId,$itemId,$table);
-	    
+	    redirect(base_url('branboxController/dashboard'));
 	    $email = $result['data1'][0]['email'];
 	      
 	    $Data=array(
-		     "FromAdress"=>'gobi.gta09@gmial.com',
+		     "FromAdress"=>'gobichan09@gmail.com',
 		     "ToAdress"=>$email,
 		     "Subject"=>"Ordered Itedm At Branbox",
 		     "Message"=>"Your Ordered items are on the way to your home",
@@ -343,8 +362,87 @@ class branboxController extends CI_Controller {
 	$this -> load -> view('header');
 	$this -> load -> view('BusinessAdmin/acceptanceHeader');
 	$this -> load -> view('BusinessAdmin/orderAcceptance',$result);
-	$this -> load -> view('BusinessAdmin/approveFooter');
+	$this -> load -> view('BusinessAdmin/approveFooter',$result);
     }
+    
+    public function orderApproved($id,$userId,$itemId,$table)
+    {
+	$result=$this->branboxModel->orderAcceptance($userId,$table);
+	//echo "<pre>";
+	//print_r($result);
+	//echo "</pre>";
+	//exit;
+	$this->branboxModel->orderApproved($id,$userId,$itemId,$table);
+	
+	$this->session->set_userdata('table',$table);
+	$html=$this -> load -> view('BusinessAdmin/header2',"",true); 
+	$html.=$this -> load -> view('BusinessAdmin/orderAcceptance',$result,true); //$this->load->view('DocumentPreview','', true);
+	$pdfFilePath = "upload/bills/BBill.pdf";
+	$this->load->library('m_pdf');
+	$pdf = $this->m_pdf->load();
+	$pdf->WriteHTML($html);
+	$pdf->Output($pdfFilePath, "f");
+	
+	
+	
+	$email = $result['data1'][0]['email'];
+	  
+	$Data=array(
+		 "FromAdress"=>'gobi.gta09@gmial.com',
+		 "ToAdress"=>$email,
+		 "Subject"=>"Ordered Itedm At Branbox",
+		 "Message"=>"Your Ordered items are on the way to your home",
+		 "FilePath"=>"/branboxAdmin/".$pdfFilePath,
+		 "SuccessMessage"=>"Your e-mail has been sent!",
+		 
+	);
+	$this->EmailSend($Data);
+	redirect(base_url('branboxController/dashboard'));
+    }
+    
+     public function getTimedNotification()
+    {
+	
+	$result=$this->branboxModel->getMessage();
+	foreach($result['totTimed'] as $countdatas)
+	{
+	    $timedCount=$timedCount+$countdatas['count'];
+	}
+	//$count=count($result['tot']);
+	$datta= $this->session->userdata('totalTimedOrder');
+	if($datta!=$timedCount)
+	{
+	    $this->session->set_userdata('totalTimedOrder',$timedCount);
+	    echo'{"item":"'.$timedCount.'"}';
+	}
+	else{
+	     echo'{"item":"0","item1":"'.$timedCount.'"}';
+	}
+	
+    }
+    
+    
+    public function getNotification()
+    {
+	
+	$result=$this->branboxModel->getMessage();
+	foreach($result['tot'] as $countdatas)
+	{
+	    $count=$count+$countdatas['count'];
+	}
+	//$count=count($result['tot']);
+	$datta= $this->session->userdata('totalOrder');
+	if($datta!=$count)
+	{
+	    $this->session->set_userdata('totalOrder',$count);
+	    echo'{"item":"'.$count.'"}';
+	}
+	else{
+	     echo'{"item":"0","item1":"'.$count.'"}';
+	}
+	
+    }
+    
     
     //Settings Controllers Begin
     //Author: Gobi
@@ -357,32 +455,7 @@ class branboxController extends CI_Controller {
 	$this -> load -> view('BusinessAdmin/menuView',$result);
     }
     
-    public function getNotification()
-    {
-	$businessId=$this->session->userdata('businessId');
-	$result= $this->branboxModel->getOrderNotificationCount($businessId);
-	$count1=$result['item'][0]['count(id)'];
-	$count2=$result['table'][0]['count(id)'];
-	$resultCount=$count1+$count2;
-	$count=$this->branboxModel->getOrderNotification($businessId);
-	
-	
-	//$session_data = $this->session->userdata('totalOrder');
-	//$total=$result-$count;
-	//echo $total;
-	//echo $result;
-	//exit;
-	
-	if($resultCount!=$count)
-	{
-	    $data=$this->branboxModel->updateNotification($resultCount,$businessId);
-	    $this->session->set_userdata('totalOrder',$resultCount);
-	    echo'{"item":"'.$count1.'","table":"'.$count2.'","total":"'.$resultCount.'"}';
-	   
-	}
-	else
-	    echo'{"total":"0","session":"'.$resultCount.'"}';
-    }
+   
     
     public function repositionMenuOrder()
     {
@@ -799,7 +872,7 @@ class branboxController extends CI_Controller {
 	$this -> load -> view('header');
 	$this -> load -> view('BusinessAdmin/tableListview',$viewResult);
     }
-   public function ajaxTableStatus()
+    public function ajaxTableStatus()
     {
 	$tableId=$_POST["tableId"];
 	$businessId=$this->session->userdata('businessId');
@@ -879,10 +952,31 @@ class branboxController extends CI_Controller {
     function offerView()
     {
 	$data['view'] = $this->branboxModel->offerView();
+	$data['getSubMenuItem'] = $this->branboxModel->getSubMenuItem();
 	$this -> load -> view('header');
 	$this -> load -> view('BusinessAdmin/offerView',$data);
     }
-    
+     public function ajaxOfferStatus()
+    {
+	$offerId=$_POST["offerId"];
+	$businessId=$this->session->userdata('businessId');
+	//$id=$_POST["itemId"];
+	$result=$this->branboxModel->ajaxTableStatus($offerId);
+	if($result[0]['status']=="ON")
+	{
+	   $status="OFF"; 
+	}
+	else
+	{
+	    $status="ON";    
+	}
+	$form_data=array(
+		    'status'=>$status
+		    );
+	$this->db->where('id',$offerId);
+	$this->db->update('offer', $form_data);
+	echo'{"status":"'.$status.'","OfferId":"'.$offerId.'"}';
+    }
     function offerAdd()
     {
 	if(isset($_POST['Save']))
@@ -890,8 +984,10 @@ class branboxController extends CI_Controller {
 	    $data['add'] = $this->branboxModel->offerAdd();
 	    redirect('branboxController/offerView');
 	}
+	
+	$data['getSubMenuItem'] = $this->branboxModel->getSubMenuItem();
 	$this -> load -> view('header');
-	$this -> load -> view('BusinessAdmin/offerAdd');
+	$this -> load -> view('BusinessAdmin/offerAdd',$data);
     }
     
     function offerEdit($id)
@@ -901,6 +997,7 @@ class branboxController extends CI_Controller {
 	    $data['update'] = $this->branboxModel->offerUpdate($id);
 	    redirect('branboxController/offerView');
 	}
+	$data['getSubMenuItem'] = $this->branboxModel->getSubMenuItem();
 	$data['edit'] = $this->branboxModel->offerEdit($id);
 	$this -> load -> view('header');
 	$this -> load -> view('BusinessAdmin/offerEdit',$data);

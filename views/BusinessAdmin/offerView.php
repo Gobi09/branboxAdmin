@@ -26,8 +26,13 @@
 				    <thead>
 					<tr>
 					    <th>Title</th>
-					    <th>Image</th>
-					    <th>Text Area</th>
+					    <th>item Nme</th>
+					    <th>image</th>
+					    <th>Price</th>
+					    <th>Valid From Date</th>
+					    <th>Valid Upto Date</th>
+					    <th>Description</th>
+					    <th>Status</th>
 					    <th>Action</th>
 					</tr>
 				    </thead>
@@ -38,11 +43,51 @@
 						<?php echo $row['title']?>
 					    </td>
 					    <td>
-						<?php echo $row['image']?>
+						<?php  foreach($getSubMenuItem as $data) { if($row['itemId']==$data['id']) echo $data['name']; } ?>
 					    </td>
+					    <td>
+						<img class=""  style="height: 75px;width: 105px;" src="<?php echo $row['image']; ?>" >
+					    </td>
+					    <td>
+						<?php echo $row['price']?>
+					    </td>
+					    <td>
+						<?php echo $row['validFromdate']?>
+					    </td>
+					    <td>
+						<?php echo $row['validUptodate']?>
+					    </td>
+					    
 					    <td>
 						<?php echo $row['description']?>
 					    </td>
+					    <td><button <?php if($row['status']=="ON") echo 'class="btn btn-success"'; else  echo 'class="btn btn-danger"';  ?> name="status[]" id="status-<?php echo $row['id']; ?>" value="<?php echo $row['id']; ?>"><?php echo $row['status']; ?></button></td>
+						<script>
+						$("#status-<?php echo $row['id']; ?>").click(function() {
+						    var offerId=<?php echo $row['id']; ?>;
+						    $.ajax({
+							type: "POST",
+							dataType: "json",
+							data: {offerId:offerId},
+							url: "<?php echo base_url(); ?>branboxController/ajaxOfferStatus",
+							success: function(json){
+							    if (json.status=="ON")
+							    {
+								$("#status-<?php echo $row['id']; ?>").html(json.status);
+								$("#status-<?php echo $row['id']; ?>").removeAttr("class");
+								$("#status-<?php echo $row['id']; ?>").attr("class","btn btn-success");
+							    }
+							    else
+							    {
+								$("#status-<?php echo $row['id']; ?>").html(json.status);
+								$("#status-<?php echo $row['id']; ?>").removeAttr("class");
+								$("#status-<?php echo $row['id']; ?>").attr("class","btn btn-danger");
+							    }
+							
+							},
+						    });
+						});
+						</script>
 					    <td>
 						<a class="btn btn-xs btn-primary" href="<?php echo base_url('branboxController/offerEdit/'.$row['id']);?>"><i class="fa fa-edit"></i></a>
 						<a class="btn btn-xs btn-danger" data-toggle="modal" id="delete_box" href="<?php echo base_url('branboxController/offerDelete/'.$row['id']);?>"><i class="fa fa-trash-o"></i></a>

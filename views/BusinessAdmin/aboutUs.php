@@ -24,6 +24,7 @@
 					    <label class="col-md-3 control-label">Title</label>
 					    <div class="col-md-6">
 						<input type="text" class="form-control" name="title" id="title" value="<?php if(isset($edit[0]['title'])) echo $edit[0]['title']; else echo ""; ?>">
+						
 					    </div>
 					</div>
 					<div class="form-group">
@@ -50,6 +51,23 @@
 						<textarea class="ckeditor" name="description" id="description"><?php if(isset($edit[0]['description'])) echo $edit[0]['description']; else echo "";?></textarea>
 					    </div>    
 					</div>
+				    </div>
+				    <div class="col-md-8">
+					 <input type="hidden" name="gobio" value="sdfassdsssssssssssfd">
+					    <input type="file" id="preview" name="About[]" class="col-md-12 " onchange="attachment(this);" >
+					<legend>About Us Gallery Images<button type="button" onclick="addImage()" class="pull-right btn btn-primary"><i class="fa  fa-plus"></i></button></legend>
+					    <div class="row">
+						<div class="row AdjustPadding" id="image1" style="padding-bottom:20px;" >						    
+						    <div class="col-md-12" id="gallery">
+							<div class="col-md-4 ImageViewer AdjustPadding" style="padding-bottom:20px;"  >
+							    <img src="<?php echo site_url('assets/img/gallery/user-15.jpg');?>" class="col-md-12 previewimage " id="dummy1" style="height: 185px;" >
+								<input type="file" id="preview" name="Aboutgalleryimage1[]" class="col-md-12 " onchange="attachment(this);" >
+							   
+								
+							</div>
+						    </div>
+						</div>
+					    </div>
 				    </div>
 				    <div class="col-md-12 col-md-offset-3 p-t-10">
 					<fieldset>
@@ -85,6 +103,49 @@
 		};
 	    };
 	</script>
+	
+	<script>
+
+    function attachments()
+    {
+	
+	$(".removeButton").on('click',function(){
+	   
+	    var $row = $(this).parents('.ImageViewer');
+	    $row.remove();
+	});
+    }
+    
+    function addImage(){
+    $('<div class="col-md-4 col-sm-4 col-xs-12 ImageViewer" style="padding-bottom:20px;"  ><img src="<?php echo site_url('assets/img/gallery/user-15.jpg');?>" class="col-md-12 previewimage" id="dummy1" style="height: 185px;" ><input type="file" id="preview" name="Aboutgalleryimage[]" onchange="attachment(this)" ><p></p><div class="col-md-12 " ><a  onclick ="" class="pull-right btn btn-danger removeButton" data-template="textbox"><i class="fa fa-trash"></i></a> </div>	').appendTo("#gallery");	
+    attachments();
+    }
+    
+    function attachment($this) {
+  var imgval=$('#preview').val();
+$('#dummy1').val(imgval);
+    var oFReader = new FileReader();
+    oFReader.readAsDataURL($this.files[0]);
+    oFReader.onload = function (oFREvent) {
+    $($this).parents('.ImageViewer').find('img').attr("src",  oFREvent.target.result);
+    
+    };
+    };
+    
+    
+    function attachmenter($this) {
+    var imgval=$('#previewer').val();
+    var oFReader = new FileReader();
+    oFReader.readAsDataURL($this.files[0]);
+    oFReader.onload = function (oFREvent) {
+    $($this).parents('.viewer').find('img').attr("src",  oFREvent.target.result);
+    
+    };
+    };
+    
+</script>
+	
+	
     </body>
 </html>
 

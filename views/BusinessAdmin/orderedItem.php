@@ -25,11 +25,9 @@
 				    <thead>
 					<tr>
 					    <th>User Name</th>
-					    <th>Item Name</th>
-					    <th>Image</th>
-					    <th>Quantity</th>
-					    <th>Price</th>
-					    <th>Order Time</th>
+					    <th>Email</th>
+					    <th>quantity</th>
+					    <th>Order Type</th>
 					    <th>Status</th>
 					    <th>Action</th>
 					</tr>
@@ -38,43 +36,36 @@
 					<?php foreach($orderItem as $row){?>
 					<tr>
 					    <td>
-						<?php if($row['status']=='ordered') {?>
-						<a href="<?php echo base_url("branboxController/orderAcceptance/".$row['id']."/".$row['endUserId']."/".$row['itemId']."/o")?>"><?php echo $row['userName']?></a>
+						<?php if($row['status']=='ordered') { if($row['timedDelivery']=="NO"){$timedDate='o';}else{$timedDate='t';} ?>
+						<a href="<?php echo base_url("branboxController/orderAcceptance/".$row['userId']."/".$timedDate)?>"><?php echo $row['userName']?></a>
 						<?php } else  echo $row['userName']; ?>
 					    </td>
 					    <td>
-						<?php if($row['status']=='ordered') {?>
-						<a href="<?php echo base_url("branboxController/orderAcceptance/".$row['id']."/".$row['endUserId']."/".$row['itemId']."/o")?>"><?php echo $row['name']?></a>
-						<?php } else  echo $row['name']; ?>
+						<?php if($row['status']=='ordered') { if($row['timedDelivery']=="NO"){$timedDate='o';}else{$timedDate='t';} ?>
+						<a href="<?php echo base_url("branboxController/orderAcceptance/".$row['endUserId']."/".$timedDate)?>"><?php echo $row['email']?></a>
+						<?php } else  echo $row['email']; ?>
 					    </td>
-					    <td>
-						
-						<img style="height: 75px;width: 105px;" src="<?php echo $image_url.$row['image'];?>">
-						
+					    
+					     <td>
+						<?php if($row['status']=='ordered' && $row['timedDelivery']=="NO" ) { if($row['timedDate']=="o"){$timedDate='o';}else{$timedDate='t';} ?>
+						<a href="<?php echo base_url("branboxController/orderAcceptance/".$row['endUserId']."/".$timedDate)?>"><?php echo $row['email']?></a>
+						<?php } else  echo $row['email']; ?>
 					    </td>
+					    
 					    <td>
-						<?php if($row['status']=='ordered') {?>
-						<a href="<?php echo base_url("branboxController/orderAcceptance/".$row['id']."/".$row['endUserId']."/".$row['itemId']."/o")?>"><?php echo $row['quantity']?></a>
-						<?php } else  echo $row['quantity']; ?>
+						<?php if($row['status']=='ordered') { if($row['timedDelivery']=="NO"){$timedDate='o';}else{$timedDate='t';} ?>
+						<a href="<?php echo base_url("branboxController/orderAcceptance/".$row['endUserId']."/".$timedDate)?>"><?php echo $row['count']?></a>
+						<?php } else  echo $row['count']; ?>
 					    </td>
+					    
 					    <td>
-						<?php if($row['status']=='ordered') {?>
-						<a href="<?php echo base_url("branboxController/orderAcceptance/".$row['id']."/".$row['endUserId']."/".$row['itemId']."/o")?>"><?php echo $row['price']?></a>
-						<?php } else  echo $row['price']; ?>
-					    </td>
-					    <td>
-						<?php if($row['status']=='ordered') {?>
-						<a href="<?php echo base_url("branboxController/orderAcceptance/".$row['id']."/".$row['endUserId']."/".$row['itemId']."/o")?>"><?php echo $row['createdTime']?></a>
-						<?php } else  echo $row['createdTime']; ?>
-					    </td>
-					    <td>
-						<?php if($row['status']=='ordered') {?>
-						<a href="<?php echo base_url("branboxController/orderAcceptance/".$row['id']."/".$row['endUserId']."/".$row['itemId']."/o")?>"><?php echo $row['status']?></a>
+						<?php if($row['status']=='ordered') { if($row['timedDelivery']=="NO"){$timedDate='o';}else{$timedDate='t';} ?>
+						<a href="<?php echo base_url("branboxController/orderAcceptance/".$row['endUserId']."/".$timedDate)?>"><?php echo $row['status']?></a>
 						<?php } else  echo $row['status']; ?>
 					    </td>
 					     <td>
 						
-						<a class="btn btn-xs btn-inverse"   href="<?php echo base_url('branboxController/itemorderDelete/'.$row['id']."/".$row['endUserId']); ?>"  onclick="alert('do you want to delete')"  >  <i class="fa fa-trash-o fa-fw" >  </i> </a></td>
+						<a class="btn btn-xs btn-inverse"   href="<?php echo base_url('branboxController/itemorderDelete/'.$row['userId']); ?>"  onclick="alert('do you want to delete')"  >  <i class="fa fa-trash-o fa-fw" >  </i> </a></td>
 					    </td>
 					</tr>
 					<?php }?>

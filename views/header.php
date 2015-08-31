@@ -149,7 +149,8 @@
     <script>
 
 		$(document).ready(function() {
-			
+			$("#countnotify").hide();
+			$("#getTimedMessage").hide();
 		    <?php if($this->session->userdata('role')=='Business'){ ?>
 			setInterval(function(){
 			    $.ajax({
@@ -157,20 +158,36 @@
 				dataType: "json",
 				url: "<?php echo base_url(); ?>branboxController/getNotification",
 				success: function(json){
-				    if (json.total!=0)
+				    if (json.item!=0)
 				    {
-					
 					$.gritter.add(
 					{
 					title:"This is a Food Order and Table Booking notice!",
-					text:"There is "+json.item+" food orders and "+json.table+" Table Booking Waiting for Approve",
+					text:"There is "+json.item+" food orders  Waiting for Approve",
 					image:"<?php echo base_url();?>assets/img/ordernotification.jpg",sticky:true,time:""
 					});
 				    }
 				    
 				},
-			    });
+			    });  //
 			    
+			        $.ajax({
+				type: "POST",
+				dataType:"json",
+				url: "<?php echo base_url(); ?>branboxController/getMessageCount",
+				success: function(json){
+				    if (json.count>0) {
+					$("#countnotify").show();
+					 $('#notificationCount').html(json.count);
+				    }
+				    else{
+					$("#countnotify").hide();
+				    }
+    				   
+				    
+				},
+			    });
+				
 			     $.ajax({
 				type: "POST",
 				url: "<?php echo base_url(); ?>branboxController/getMessage",
@@ -180,7 +197,61 @@
 				},
 			    }); 
 			    
-			}, 5000);
+			   
+			   
+			   //for Timed Notification
+			   
+			   
+			    $.ajax({
+				type: "POST",
+				dataType: "json",
+				url: "<?php echo base_url(); ?>branboxController/getTimedNotification",
+				success: function(json){
+				    if (json.item!=0)
+				    {
+					
+					$.gritter.add(
+					{
+					title:"This is a Timed Order notice!",
+					text:"There is "+json.item+" food orders Waiting for Approve",
+					image:"<?php echo base_url();?>assets/img/ordernotification.jpg",sticky:true,time:""
+					});
+				    }
+				    
+				},
+			    });
+			    //
+			    $.ajax({
+				type: "POST",
+				dataType:"json",
+				url: "<?php echo base_url(); ?>branboxController/getTimedMessageCount",
+				success: function(json){
+				    if (json.count>0) {
+					$("#getTimedMessage").show();
+					 $('#NotificationTimedMessage').html(json.count);
+				    }
+				    else{
+					$("#getTimedMessage").hide();
+				    }
+			 				   
+				    
+				},
+			    });
+			    
+			
+			     $.ajax({
+				type: "POST",
+				url: "<?php echo base_url(); ?>branboxController/getTimedMessage",
+				success: function(response){
+				    $('#timedMessage').html(response);
+				    
+				},
+			    });
+			     
+			    
+			    
+			    
+			}, 2000);
 			
 			   
 			
@@ -189,16 +260,7 @@
 			
 			
 		});
-		//$("#add-regular").click(function()
-		//    {
-		//	$.gritter.add({
-		//	    title:"This is a regular notice!",
-		//	    text:"This will fade out after a certain amount of time. Sed tempus lacus ut lectus rutrum placerat. ",
-		//	    image:"assets/img/user-3.jpg",
-		//	    sticky:false,time:""
-		//	});
-		//	return false
-		//    });
+		
 	
     </script>
     <script> 
@@ -208,117 +270,48 @@
 	    if (url=="http://localhost/branboxAdmin/branboxController/dashboard") {
 		$("#page1").addClass("has-sub active");
 	    }
-	   /* else if (url=="http://localhost/branboxAdmin/branboxController/menuView" || url=="http://localhost/branboxAdmin/branboxController/subMenuItemView" || url=="http://localhost/branboxAdmin/branboxController/subMenuView") {
-		$("#page2").addClass("has-sub active");
-	    }*/ /*else
-	    if(url!="http://localhost/branboxAdmin/branboxController/menuEdit" ) {
-		$("#page2").addClass("has-sub active");
-		$("#page3").addClass("active");
-	    }*/
+	   
 	    else if(url=="http://localhost/branboxAdmin/branboxController/menuView" || url=="http://localhost/branboxAdmin/branboxController/menuAdd" ) {
 		$("#page2").addClass("has-sub active");
 		$("#page3").addClass("active");
-	    }/*else
-	    
-	    if(url!="http://localhost/branboxAdmin/branboxController/subMenuEdit" ) {
-		$("#page2").addClass("has-sub active");
-		$("#page3").removeAttr("class");
-		$("#page4").addClass("active");
-	    }*/ else
+	    } else
 	    if (url=="http://localhost/branboxAdmin/branboxController/subMenuView" || url=="http://localhost/branboxAdmin/branboxController/subMenuAdd") {
 		$("#page2").addClass("has-sub active");
 		$("#page4").addClass("active");
-	    }/*else
-	    if (url=="http://localhost/branboxAdmin/branboxController/subMenuItemEdit") {
-		$("#page2").addClass("has-sub active");
-		$("#page3").removeAttr("class");
-		$("#page4").removeAttr("class");
-		$("#page5").addClass("active");
-	    }*/
+	    }
+	    else if(url=="http://localhost/branboxAdmin/branboxController/locationView" || url=="http://localhost/branboxAdmin/branboxController/locationAdd" ) {
+		$("#page19").addClass("has-sub active");
+	    }
 	    else if (url=="http://localhost/branboxAdmin/branboxController/subMenuItemView" || url=="http://localhost/branboxAdmin/branboxController/subMenuItemAdd") {
 		$("#page2").addClass("has-sub active");
-		//$("#page4").removeAttr("class");
 		$("#page5").addClass("active");
-	    }/*else
-	    
-	    if (url=="http://localhost/branboxAdmin/branboxController/tableEdit") {
-		$("#page2").removeAttr("class");
-		$("#page3").removeAttr("class");
-		$("#page4").removeAttr("class");
-		$("#page5").removeAttr("class");
-		$("#page6").addClass("active");
-	    }*/
+	    }
 	    else if (url=="http://localhost/branboxAdmin/branboxController/tableView" || url=="http://localhost/branboxAdmin/branboxController/tableAdd") {
-		//$("#page2").removeAttr("class");
-		//$("#page3").removeAttr("class");
-		//$("#page4").removeAttr("class");
-		//$("#page5").removeAttr("class");
 		$("#page6").addClass("active");
 	    }else if (url=="http://localhost/branboxAdmin/branboxController/colorView") {
-		//$("#page2").removeAttr("class");
-		//$("#page3").removeAttr("class");
-		//$("#page4").removeAttr("class");
-		//$("#page5").removeAttr("class");
 		$("#page7").addClass("has-sub active");
 	    }
 	    else  if (url=="http://localhost/branboxAdmin/branboxController/galleryAdd") {
-		//$("#page2").removeAttr("class");
-		//$("#page3").removeAttr("class");
-		//$("#page4").removeAttr("class");
-		//$("#page5").removeAttr("class");
 		$("#page8").addClass("has-sub active");
 	    }
 	    else if (url=="http://localhost/branboxAdmin/branboxController/offerView") {
-		//$("#page2").removeAttr("class");
-		//$("#page3").removeAttr("class");
-		//$("#page4").removeAttr("class");
-		//$("#page5").removeAttr("class");
 		$("#page9").addClass("has-sub active");
 	    }
 	    else if (url=="http://localhost/branboxAdmin/branboxController/aboutUs") {
-		//$("#page2").removeAttr("class");
-		//$("#page3").removeAttr("class");
-		//$("#page4").removeAttr("class");
-		//$("#page5").removeAttr("class");
 		$("#page10").addClass("has-sub active");
 	    }
 	    else if (url=="http://localhost/branboxAdmin/branboxController/tableRequest") {
-		//$("#page2").removeAttr("class");
-		//$("#page3").removeAttr("class");
-		//$("#page4").removeAttr("class");
-		//$("#page5").removeAttr("class");
-		//
 		$("#11-a").addClass("has-sub active");
 		$("#page11").addClass("active");
 	    }
 	    else if (url=="http://localhost/branboxAdmin/branboxController/orderedItem") {
-		//$("#page2").removeAttr("class");
-		//$("#page3").removeAttr("class");
-		//$("#page4").removeAttr("class");
-		//$("#page5").removeAttr("class");
 		$("#11-a").addClass("has-sub active");
 		$("#page12").addClass("active");
 	    }
-	//    else if (url!="http://localhost/branboxAdmin/branboxController/adminUserEdit") {
-	//	$("#page2").removeAttr("class");
-	//	$("#page3").removeAttr("class");
-	//	$("#page4").removeAttr("class");
-	//	$("#page5").removeAttr("class");
-	//	$("#page13").addClass(" active");
-	//    }
 	    else if (url=="http://localhost/branboxAdmin/branboxController/adminUserView" || url=="http://localhost/branboxAdmin/branboxController/adminUserAdd") {
-		//$("#page2").removeAttr("class");
-		//$("#page3").removeAttr("class");
-		//$("#page4").removeAttr("class");
-		//$("#page5").removeAttr("class");
 		$("#page13").addClass(" active");
 	    }
 	    else if (url=="http://localhost/branboxAdmin/branboxController/restuarantView") {
-		//$("#page2").removeAttr("class");
-		//$("#page3").removeAttr("class");
-		//$("#page4").removeAttr("class");
-		//$("#page5").removeAttr("class");
-		//$("#page13").removeAttr("class");
 		$("#page14").addClass("active");
 	    }
 	    
@@ -369,9 +362,24 @@
 			</div>
 		    </form>
 		</li>
-		
-		<li class="dropdown" id="message">
-		    
+		<li class="dropdown">
+		    <a class="dropdown-toggle f-s-14" data-toggle="dropdown" id="getTimedMessage" href="javascript:;" aria-expanded="false">
+			    <i class="fa fa-calendar"></i>
+			    <span class="label" id="NotificationTimedMessage"></span>
+		    </a>
+		    <ul class="dropdown-menu media-list pull-right animated fadeInDown" id="timedMessage">
+			
+		    </ul>
+		</li>
+		<li class="ropdown-menu media-list animated fadeInDown" >
+		     <a href="javascript:;" data-toggle="dropdown" id="countnotify" class="dropdown-toggle f-s-14">
+			<i class="fa fa-envelope"></i>
+			<span class="label" id="notificationCount">0</span>
+		    </a>
+		     <ul class="dropdown-menu media-list pull-right animated fadeInDown" id="message">
+			
+		     </ul>
+		     
 		</li>
 
 		<li class="dropdown navbar-user">
@@ -433,7 +441,7 @@
 		</li>
 		<!--<li class="" id="page6"><a href="<?php echo base_url(); ?>branboxController/tableView"><i class="fa fa-align-left "></i>Table List</a>-->
 		<!--</li>-->
-		<li class="" id="page7"><a href="<?php echo base_url(); ?>branboxController/locationView"><i class="fa fa-align-left "></i>Locations</a>
+		<li class="" id="page19"><a href="<?php echo base_url(); ?>branboxController/locationView"><i class="fa fa-align-left "></i>Locations</a>
 		</li>
 		<li class="" id="page8"><a href="<?php echo base_url(); ?>branboxController/galleryAdd"><i class="fa fa-align-left "></i>Gallery</a>
 		</li>

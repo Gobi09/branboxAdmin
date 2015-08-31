@@ -51,7 +51,7 @@ Modified on: 24/03/15
 			<tbody class="handles list" id="sortable">
 			    <?php foreach($getSubMenu as $data) { ?>
 			     <tr class="odd new"  id="<?php echo $data['id'] ?>">
-				<input type="hidden" name="menuId" id="menuId" value="<?php foreach($getMenu as $menu) if($menu['id']== $data['menuId'])echo $menu['id']; ?>">
+				<input type="hidden" name="menuId" id="menuId<?php echo $data['id'] ?>" value="<?php foreach($getMenu as $menu) if($menu['id']== $data['menuId'])echo $menu['id']; ?>">
 				<td><span><i class="fa fa-refresh fa-5x"></span></td>
 				<td><?php foreach($getMenu as $menu) if($menu['id']== $data['menuId'])echo $menu['name']; ?></td>
                                 <td><?php echo $data['name']; ?></td>
@@ -60,7 +60,7 @@ Modified on: 24/03/15
 				<td><button <?php if($data['status']=="ON") echo 'class="btn btn-success"'; else  echo 'class="btn btn-danger"';  ?> name="status[]" id="status-<?php echo $data['id']; ?>"  value="<?php echo $data['id']; ?>"><?php echo $data['status']; ?></button></td>
 				<script>
 				$("#status-<?php echo $data['id']; ?>").click(function() {
-				    var menuId=$("#menuId").val();
+				    var menuId=$("#menuId<?php echo $data['id'] ?>").val();
 				    var subMenuId=<?php echo $data['id']; ?>;
 				    $.ajax({
 					type: "POST",
@@ -88,7 +88,7 @@ Modified on: 24/03/15
 				<td><button <?php if($data['online']=="ON") echo 'class="btn btn-success"'; else  echo 'class="btn btn-danger"';  ?> name="online[]" id="online-<?php echo $data['id']; ?>" value="<?php echo $data['id']; ?>"><?php echo $data['online']; ?></button></td>
 				<script>
 				$("#online-<?php echo $data['id']; ?>").click(function() {
-				    var menuId=$("#menuId").val();
+				    var menuId=$("#menuId<?php echo $data['id'] ?>").val();
 				    var subMenuId=<?php echo $data['id']; ?>;
 				    $.ajax({
 					type: "POST",
