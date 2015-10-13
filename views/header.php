@@ -64,7 +64,17 @@
     <link href="<?php echo base_url(); ?>assets/plugins/bootstrap-select/bootstrap-select.min.css" rel="stylesheet" />
     <link href="<?php echo base_url(); ?>assets/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css" rel="stylesheet" />
     <link href="<?php echo base_url(); ?>assets/plugins/jquery-tag-it/css/jquery.tagit.css" rel="stylesheet" />
+    <link href="<?php echo base_url(); ?>assets/chosen/chosen.css" rel="stylesheet" />
     <!-- ================== END PAGE LEVEL STYLE ================== -->
+    
+    <!-- ================== Begin Cropper packages================== -->
+	<script src="<?php echo base_url(); ?>assets/cropper/js/yui-min.js"></script>
+	<link href="<?php echo base_url(); ?>assets/cropper/css/style.css" rel="stylesheet" />
+	<script src="<?php echo base_url(); ?>assets/cropper/js/cropbox.js"></script>
+	<script src="<?php echo base_url(); ?>assets/cropper/js/cropbox-min.js"></script>
+	
+	<!-- ================== End Cropper packages================== -->
+    
     
     <!-- ================== JS ================== -->
     
@@ -112,6 +122,7 @@
     <script src="<?php echo base_url(); ?>assets/plugins/jquery-tag-it/js/tag-it.min.js"></script>
     <script src="<?php echo base_url(); ?>assets/js/form-plugins.demo.min.js"></script>
     <script src="<?php echo base_url(); ?>assets/js/apps.min.js"></script>
+    <script src="<?php echo base_url(); ?>assets/chosen/chosen.jquery.js"></script>
     <!-- ================== END PAGE LEVEL JS ================== -->
     
     <!-- ================== BEGIN PAGE LEVEL JS wizard ================== -->
@@ -126,7 +137,10 @@
 	<script src="<?php echo base_url(); ?>assets/js/bootbox.min.js"></script>
 	 <link href="<?php echo base_url(); ?>assets/plugins/gritter/css/jquery.gritter.css" rel="stylesheet" />
     <!-- ================== END PAGE LEVEL JS ================== -->
-    
+    <!-- ================== BEGIN PAGE LEVEL Currency Format ================== -->
+	<script type="text/javascript" src="<?php echo base_url(); ?>assets/js/jquery.formatCurrency-1.4.0.js"></script>
+    <!-- ================== END PAGE LEVEL JS ================== -->
+	
     
     <!--loader-->
 	<link href="<?php echo base_url(); ?>assets/css/jquery.loader.css" rel="stylesheet" />
@@ -158,12 +172,22 @@
 				dataType: "json",
 				url: "<?php echo base_url(); ?>branboxController/getNotification",
 				success: function(json){
+				console.log(json);
 				    if (json.item!=0)
 				    {
 					$.gritter.add(
 					{
-					title:"This is a Food Order and Table Booking notice!",
+					title:"This is a Food Order notice!",
 					text:"There is "+json.item+" food orders  Waiting for Approve",
+					image:"<?php echo base_url();?>assets/img/ordernotification.jpg",sticky:true,time:""
+					});
+				    }
+				    if (json.table!=0)
+				    {
+					$.gritter.add(
+					{
+					title:"This is a Table Booking notice!",
+					text:"There is "+json.table+" Table Booking orders  Waiting for Approve",
 					image:"<?php echo base_url();?>assets/img/ordernotification.jpg",sticky:true,time:""
 					});
 				    }
@@ -267,66 +291,77 @@
 	$(function(){
 	    var url=window.location;
 	  
-	    if (url=="http://localhost/branboxAdmin/branboxController/dashboard") {
+	    if (url=="http://appnlogic.com/branboxAdmin/branboxController/dashboard") {
 		$("#page1").addClass("has-sub active");
 	    }
 	   
-	    else if(url=="http://localhost/branboxAdmin/branboxController/menuView" || url=="http://localhost/branboxAdmin/branboxController/menuAdd" ) {
+	    else if(url=="http://appnlogic.com/branboxAdmin/branboxController/menuView" || url=="http://appnlogic.com/branboxAdmin/branboxController/menuAdd" ) {
 		$("#page2").addClass("has-sub active");
 		$("#page3").addClass("active");
 	    } else
-	    if (url=="http://localhost/branboxAdmin/branboxController/subMenuView" || url=="http://localhost/branboxAdmin/branboxController/subMenuAdd") {
+	    if (url=="http://appnlogic.com/branboxAdmin/branboxController/subMenuView" || url=="http://appnlogic.com/branboxAdmin/branboxController/subMenuAdd") {
 		$("#page2").addClass("has-sub active");
 		$("#page4").addClass("active");
 	    }
-	    else if(url=="http://localhost/branboxAdmin/branboxController/locationView" || url=="http://localhost/branboxAdmin/branboxController/locationAdd" ) {
+	    else if(url=="http://appnlogic.com/branboxAdmin/branboxController/locationView" || url=="http://appnlogic.com/branboxAdmin/branboxController/locationAdd" ) {
 		$("#page19").addClass("has-sub active");
 	    }
-	    else if (url=="http://localhost/branboxAdmin/branboxController/subMenuItemView" || url=="http://localhost/branboxAdmin/branboxController/subMenuItemAdd") {
+	    else if (url=="http://appnlogic.com/branboxAdmin/branboxController/subMenuItemView" || url=="http://appnlogic.com/branboxAdmin/branboxController/subMenuItemAdd") {
 		$("#page2").addClass("has-sub active");
 		$("#page5").addClass("active");
 	    }
-	    else if (url=="http://localhost/branboxAdmin/branboxController/tableView" || url=="http://localhost/branboxAdmin/branboxController/tableAdd") {
+	    else if (url=="http://appnlogic.com/branboxAdmin/branboxController/tableView" || url=="http://appnlogic.com/branboxAdmin/branboxController/tableAdd") {
 		$("#page6").addClass("active");
-	    }else if (url=="http://localhost/branboxAdmin/branboxController/colorView") {
+	    }else if (url=="http://appnlogic.com/branboxAdmin/branboxController/colorView") {
 		$("#page7").addClass("has-sub active");
 	    }
-	    else  if (url=="http://localhost/branboxAdmin/branboxController/galleryAdd") {
+	    else  if (url=="http://appnlogic.com/branboxAdmin/branboxController/galleryAdd") {
 		$("#page8").addClass("has-sub active");
 	    }
-	    else if (url=="http://localhost/branboxAdmin/branboxController/offerView") {
+	    else if (url=="http://appnlogic.com/branboxAdmin/branboxController/offerView") {
 		$("#page9").addClass("has-sub active");
 	    }
-	    else if (url=="http://localhost/branboxAdmin/branboxController/aboutUs") {
+	    else if (url=="http://appnlogic.com/branboxAdmin/branboxController/aboutUs") {
 		$("#page10").addClass("has-sub active");
 	    }
-	    else if (url=="http://localhost/branboxAdmin/branboxController/tableRequest") {
+	    else if (url=="http://a/branboxAdmin/branboxController/tableRequest") {
 		$("#11-a").addClass("has-sub active");
 		$("#page11").addClass("active");
 	    }
-	    else if (url=="http://localhost/branboxAdmin/branboxController/orderedItem") {
+	    else if (url=="http://appnlogic.com/branboxAdmin/branboxController/orderedItem") {
 		$("#11-a").addClass("has-sub active");
 		$("#page12").addClass("active");
 	    }
-	    else if (url=="http://localhost/branboxAdmin/branboxController/adminUserView" || url=="http://localhost/branboxAdmin/branboxController/adminUserAdd") {
+	    else if (url=="http://appnlogic.com/branboxAdmin/branboxController/adminUserView" || url=="http://appnlogic.com/branboxAdmin/branboxController/adminUserAdd") {
 		$("#page13").addClass(" active");
 	    }
-	    else if (url=="http://localhost/branboxAdmin/branboxController/restuarantView") {
+	    else if (url=="http://appnlogic.com/branboxAdmin/branboxController/restuarantView") {
 		$("#page14").addClass("active");
 	    }
-	    
+	    else if (url=="http://appnlogic.com/branboxAdmin/branboxController/feadBack") {
+		$("#page18").addClass("active");
+	    }
+	    else if (url=="http://appnlogic.com/branboxAdmin/branboxController/endUserView") {
+		$("#page20").addClass("active");
+	    }
+	    else if (url=="http://appnlogic.com/branboxAdmin/branboxController/sendNotification") {
+		$("#page21").addClass("active");
+	    }
+	    else if (url=="http://appnlogic.com/branboxAdmin/branboxController/queueTicketNotification") {
+		$("#page22").addClass("active");
+	    }
 	    });
 	
     </script>
     <style>
 	/*#sidebar .nav {*/
-	     /*background-image: url(http://localhost/burtlan/assets/img/login-bg/1647368.jpg);*/
+	     /*background-image: url(http://appnlogic.com/burtlan/assets/img/login-bg/1647368.jpg);*/
 	    /*background: white;*/
 	    
 	/*}*/
 	
 	#sidebar{
-	    background-image: url(http://localhost/burtlan/assets/img/login-bg/1647368.jpg);
+	    background-image: url(http://appnlogic.com/burtlan/assets/img/login-bg/1647368.jpg);
 	    /*background: #f0f3f4 ;*/
 	}
     </style>
@@ -362,9 +397,15 @@
 			</div>
 		    </form>
 		</li>
+		<li>
+		    <a class="btn" data-toggle="modal" data-target="#Queue">
+			  <i class="fa fa-cutlery fa-1x"></i>
+		    </a>
+		</li>
+		
 		<li class="dropdown">
 		    <a class="dropdown-toggle f-s-14" data-toggle="dropdown" id="getTimedMessage" href="javascript:;" aria-expanded="false">
-			    <i class="fa fa-calendar"></i>
+			    <i class="fa fa-clock-o"></i>
 			    <span class="label" id="NotificationTimedMessage"></span>
 		    </a>
 		    <ul class="dropdown-menu media-list pull-right animated fadeInDown" id="timedMessage">
@@ -427,32 +468,46 @@
 		<li class="has-sub" id="page2">
 		    <a href="javascript:;">
 			<b class="caret pull-right"></b>
-			<i class="fa fa-align-left "></i> 
+			<i class="fa fa-sitemap"></i>
 			<span>Menu Category</span>
 		    </a>
 		    <ul class="sub-menu">
-			<li class="" id="page3"><a href="<?php echo base_url(); ?>branboxController/menuView"><b class="caret pull-right"></b>Menu</a>
+			<li class="" id="page3"><a href="<?php echo base_url(); ?>branboxController/menuView">Menu</a>
 			</li>
-			<li class="" id="page4"><a href="<?php echo base_url(); ?>branboxController/subMenuView"><b class="caret pull-right"></b>Sub Menu</a>
+			<li class="" id="page4"><a href="<?php echo base_url(); ?>branboxController/subMenuView">Sub Menu</a>
 			</li>
-			<li class="" id="page5"><a href="<?php echo base_url(); ?>branboxController/subMenuItemView"><b class="caret pull-right"></b>Sub Menu Item</a>
+			<li class="" id="page5"><a href="<?php echo base_url(); ?>branboxController/subMenuItemView">Sub Menu Item</a>
 			</li>
 		    </ul>
 		</li>
 		<!--<li class="" id="page6"><a href="<?php echo base_url(); ?>branboxController/tableView"><i class="fa fa-align-left "></i>Table List</a>-->
 		<!--</li>-->
-		<li class="" id="page19"><a href="<?php echo base_url(); ?>branboxController/locationView"><i class="fa fa-align-left "></i>Locations</a>
+		<li class="" id="page19"><a href="<?php echo base_url(); ?>branboxController/locationView"><i class="fa fa-map-marker"></i>Locations</a>
 		</li>
-		<li class="" id="page8"><a href="<?php echo base_url(); ?>branboxController/galleryAdd"><i class="fa fa-align-left "></i>Gallery</a>
+		<li class="has-sub " id="8-a">
+		    <a href="javascript:;">
+			<b class="caret pull-right"></b>
+			<i class="fa fa-puzzle-piece"></i>
+
+			<span>Media</span>
+		    </a>
+		    <ul class="sub-menu">
+			<li class="" id="page8"><a href="<?php echo base_url(); ?>branboxController/galleryAdd">Gallery</a>
+			</li>
+			<li class="" id="page9"><a href="<?php echo base_url(); ?>branboxController/videoAdd">Video</a>
+			</li>
+		    </ul>
 		</li>
-		<li class="" id="page9"><a href="<?php echo base_url(); ?>branboxController/offerView"><i class="fa fa-align-left "></i>Offers</a>
+		<!-- <li class="" id="page8"><a href="<?php echo base_url(); ?>branboxController/galleryAdd"><i class="fa fa-align-left "></i>Gallery</a>
+		</li> -->
+		<li class="" id="page9"><a href="<?php echo base_url(); ?>branboxController/offerView"><i class="fa fa-exclamation"></i>Offers</a>
 		</li>
-		<li class="" id="page10"><a href="<?php echo base_url(); ?>branboxController/aboutUs"><i class="fa fa-align-left "></i>About US</a>
+		<li class="" id="page10"><a href="<?php echo base_url(); ?>branboxController/aboutUs"><i class="fa fa-adn"></i>About US</a>
 		</li>
 		<li class="has-sub " id="11-a">
 		    <a href="javascript:;">
 			<b class="caret pull-right"></b>
-			<i class="fa fa-align-left "></i> 
+			<i class="fa fa-cogs"></i>
 			<span>Order Category</span>
 		    </a>
 		    <ul class="sub-menu">
@@ -462,8 +517,13 @@
 			</li>
 		    </ul>
 		</li>
-		<li class="" id="page7"><a href="<?php echo base_url(); ?>branboxController/colorView"><i class="fa fa-align-left "></i>Settings</a>
+		<li class="" id="page7"><a href="<?php echo base_url(); ?>branboxController/colorView"><i class="fa fa-wrench"></i>Settings</a>
 		</li>
+		<li class="" id="page18"><a href="<?php echo base_url(); ?>branboxController/feadBack"><i class="fa fa-comment"></i>FeedBacks</a>
+		</li>
+		<li class="" id="page20"><a href="<?php echo base_url(); ?>branboxController/endUserView"><i class="fa fa-info-circle"></i>Customer Details</a></li>
+		<li class="" id="page21"><a href="<?php echo base_url(); ?>branboxController/sendNotification"><i class="fa fa-rocket"></i>Send Notification</a></li>
+		<li class="" id="page22"><a href="<?php echo base_url(); ?>branboxController/queueTicketNotification"><i class="fa fa-rocket"></i>Table Queue Notification</a></li>
 		
 	    </ul>
 	    <?php }?>
@@ -489,5 +549,68 @@
 	//    });
 	
     </script>
+    
+    <div class="modal  fade" id="Queue" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-md">
+	    <div class="modal-content">
+		<div class="modal-header" style="border-bottom: 1px solid #e5e5e5; min-height: 16.4286px; padding: 15px;">   
+		    <b><img alt="" data-id="login-cover-image" style="height: 50px;" src="<?php echo base_url("assets/img/logo.jpg")?>"></b>
+		    <button aria-hidden="true" data-dismiss="modal" class="close" type="button"><i class="fa  fa-times-circle "></i></button>
+		</div>
+		<div class="model-body" >
+		    <form  method="POST" id="form_validation1" class="margin-bottom-0">
+			
+			<div class="panel-body">
+			    <center><h4></h4></center>
+			    
+			    <div class="form-group">
+				<div class="col-md-12">
+				    
+				    <input type="hidden" name="userId" value="<?php echo $row['id'];?>" >
+				    <div class="form-group">
+					<label class="col-md-4 control-label">Enter User Email For Table</label>
+					<div class="col-md-8">
+					    <input type="email" name="userEmail[]" value="" class="form-control" >
+					</div>
+				    </div>
+				</div>
+			    </div>
+			    <div class="col-md-offset-4 col-md-6  p-t-25">
+				<div class="form-group">
+				   <label class="col col-4"></label>
+				   <input type="submit" class="btn btn-md btn-success" onclick="submitbtn();"  name="sendMess" id="send_btn" value="Send Token" >
+				</div>
+			    </div>
+			</div>
+			
+		    </form>
+		</div>
+	    </div>
+		
+	</div>
+    </div>
+    
+    <script>
+    function submitbtn()
+    {
+	
+	var currentTime = new Date();
+	var hours = currentTime.getHours();
+	var minutes = currentTime.getMinutes();
+	if (minutes < 10)
+	{
+	    minutes = "0" + minutes;
+	}
+	var suffix = "AM";
+	if (hours >= 12)
+	{suffix = "PM";hours = hours - 12;}
+	if (hours == 0) {hours = 12;}
+	var timeform=hours + ":" + minutes + " " + suffix;
+	$("#form_validation1").attr("action", "<?php echo base_url('branboxController/queueSystem');?>/"+timeform);
+	
+    }
+
+</script>
+
 	
 	    

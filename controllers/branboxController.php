@@ -92,7 +92,8 @@ class branboxController extends CI_Controller {
     public function adminLogout()
     {
 	$this->session->unset_userdata('role');
-	$this->session->unset_userdata('totalOrder');
+	$this->session->unset_userdata('notificationcount');
+	$this->session->unset_userdata('totalTimedOrder');
 	$this->session->unset_userdata('businessId');
 	unset($this->session->userdata);
 	redirect(base_url()."branboxController/admin",'refresh');
@@ -208,7 +209,8 @@ class branboxController extends CI_Controller {
 //Branbox Admin End
     public function Logout(){
 	$this->session->unset_userdata('businessId');
-	$this->session->unset_userdata('totalOrder');
+	$this->session->unset_userdata('notificationcount');
+	$this->session->unset_userdata('totalTimedOrder');
 	$this->session->unset_userdata('role');
 	unset($this->session->userdata);
 	redirect(base_url()."branboxController",'refresh');
@@ -218,30 +220,19 @@ class branboxController extends CI_Controller {
    public function getMessageCount()
    {
 	$result=$this->branboxModel->getMessage();
-	$count=count($result['tot']);
+	$count=count($result['data2']);
 	echo '{"count":"'.$count.'"}';
    }
    
    public function getMessage()
    {
 	$result=$this->branboxModel->getMessage();
-	
 	?>
 	<li class="dropdown-header">Order Notifications (<?php echo count($result['tot']);?>)</li>
-		<?php foreach($result['tot'] as $data1){?>
 		
-		<li class="media">
-		    <a href="<?php echo base_url('branboxController/orderAcceptance/'.$data1['id']."/o"); ?>">
-			<div class="media-body">
-			    <h6 class="media-heading"> <?php echo $data1['userName']; ?></h6>
-			     <p>Ordered <?php echo $data1['count'];?> Food.</p>
-			</div>
-		    </a>
-		</li>
-		<?php }?>
 		<?php foreach($result['data2'] as $data2) { ?>
 		<li class="media">
-		    <a href="<?php echo base_url('branboxController/orderAcceptance/'.$data2['id']."/".$data2['endUserId']."/0/b"); ?>">
+		    <a href="<?php echo base_url('branboxController/orderAcceptance/'.$data2['endUserId']."/b"); ?>">
 			<div class="media-body">
 			    <h6 class="media-heading"> <?php echo $data2['userName']; ?></h6>
 			    <p>Booking The Table. Booking Order Id:<?php echo $data2['tableId'];?></p>
@@ -275,6 +266,7 @@ class branboxController extends CI_Controller {
 		    </a>
 		</li>
 		<?php }?>
+		
 	<?php
 	
     }
@@ -343,19 +335,19 @@ class branboxController extends CI_Controller {
 	    $pdf->Output($pdfFilePath, "f");
 	    
 	    $this->branboxModel->orderApproved($id,$userId,$itemId,$table);
-	    redirect(base_url('branboxController/dashboard'));
-	    $email = $result['data1'][0]['email'];
+	     redirect(base_url('branboxController/dashboard'));
+	    //$email = $result['data1'][0]['email'];
 	      
-	    $Data=array(
-		     "FromAdress"=>'gobichan09@gmail.com',
-		     "ToAdress"=>$email,
-		     "Subject"=>"Ordered Itedm At Branbox",
-		     "Message"=>"Your Ordered items are on the way to your home",
-		     "FilePath"=>"/branboxAdmin/".$pdfFilePath,
-		     "SuccessMessage"=>"Your e-mail has been sent!",
+	    //$Data=array(
+		    // "FromAdress"=>'ppkk036@gmail.com',
+		    // "ToAdress"=>$email,
+		    // "Subject"=>"Ordered Itedm At Branbox",
+		    // "Message"=>"Your Ordered items are on the way to your home",
+		    // "FilePath"=>"/branboxAdmin/".$pdfFilePath,
+		    // "SuccessMessage"=>"Your e-mail has been sent!",
 		     
-	    );
-	    $this->EmailSend($Data);
+	   // );
+	    //$this->EmailSend($Data);
 	    redirect(base_url('branboxController/dashboard'));
 	}
 	
@@ -396,19 +388,28 @@ class branboxController extends CI_Controller {
 		 "SuccessMessage"=>"Your e-mail has been sent!",
 		 
 	);
-	$this->EmailSend($Data);
 	redirect(base_url('branboxController/dashboard'));
+	$this->EmailSend($Data);
+	
     }
     
      public function getTimedNotification()
     {
 	
 	$result=$this->branboxModel->getMessage();
+	
 	foreach($result['totTimed'] as $countdatas)
 	{
 	    $timedCount=$timedCount+$countdatas['count'];
 	}
+	
 	//$count=count($result['tot']);
+	//$totalCount=$timedTableCount+$timedCount;
+	//echo "<pre>";
+	//echo $totalCount;
+	//print_r($result);
+	//echo "</pre>";
+	//exit;
 	$datta= $this->session->userdata('totalTimedOrder');
 	if($datta!=$timedCount)
 	{
@@ -426,19 +427,30 @@ class branboxController extends CI_Controller {
     {
 	
 	$result=$this->branboxModel->getMessage();
+	
 	foreach($result['tot'] as $countdatas)
 	{
 	    $count=$count+$countdatas['count'];
 	}
 	//$count=count($result['tot']);
-	$datta= $this->session->userdata('totalOrder');
-	if($datta!=$count)
+	$TableCount=count($result['data2'] );
+	//foreach($result['data2'] as $countdatasss)
+	//{
+	//    $TableCount=$TableCount+$countdatasss['count'];
+	//}
+	//$count=count($result['tot']);
+	$totalCount=$TableCount+$count;
+	 
+	//print_r($result);
+	$datta= $this->session->userdata('notificationcount');
+	
+	if($datta!=$totalCount)
 	{
-	    $this->session->set_userdata('totalOrder',$count);
-	    echo'{"item":"'.$count.'"}';
+	   $this->session->set_userdata('notificationcount',$totalCount);
+	   echo'{"item":"'.$count.'","table":"'.$TableCount.'"}';
 	}
 	else{
-	     echo'{"item":"0","item1":"'.$count.'"}';
+	     echo'{"item":"0","item1":"'.$count.'","table":"0"}';
 	}
 	
     }
@@ -872,7 +884,7 @@ class branboxController extends CI_Controller {
 	$this -> load -> view('header');
 	$this -> load -> view('BusinessAdmin/tableListview',$viewResult);
     }
-    public function ajaxTableStatus()
+   public function ajaxTableStatus()
     {
 	$tableId=$_POST["tableId"];
 	$businessId=$this->session->userdata('businessId');
@@ -947,7 +959,7 @@ class branboxController extends CI_Controller {
     
     
     
-    // Offer Start
+   // Offer Start
     
     function offerView()
     {
@@ -1139,7 +1151,31 @@ class branboxController extends CI_Controller {
 	$this -> load -> view('BusinessAdmin/galleryAdd',$data);
  
     }
-    
+    function videoAdd()
+    {
+	
+	$config = array();
+        $config["base_url"] = base_url()."branboxController/videoAdd";
+        $total_row= $this->branboxModel->video_count();
+	$config["total_rows"] = $total_row;
+	$config["per_page"] = 4;
+	//$config['use_page_numbers'] = TRUE;
+	$config['num_links'] = $total_row;
+	$config['cur_tag_open'] = '&nbsp;<a class="current">';
+	$config['cur_tag_close'] = '</a>';
+	$config['next_link'] = 'Next';
+	$config['prev_link'] = 'Previous';
+	
+	$this->pagination->initialize($config);
+	$page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
+	$data["results"] = $this->branboxModel->fetch_Videodata($config["per_page"], $page);
+	$str_links = $this->pagination->create_links();
+	$data["links"] = explode('&nbsp;',$str_links );
+	//$viewResult['result']=$this->branboxModel->getImageList(); 
+	$this -> load -> view('header');
+	$this -> load -> view('BusinessAdmin/videoAdd',$data);
+ 
+    }
     public function ajaxGalleryActive()
     {
 	$businessId=$this->session->userdata('businessId');
@@ -1161,11 +1197,38 @@ class branboxController extends CI_Controller {
 	$this->db->update('gallery', $form_data);
 	echo'{"active":"'.$active.'","businessId":"'.$id.'"}';
     }
+    public function ajaxVideoActive()
+    {
+	$businessId=$this->session->userdata('businessId');
+	$id=$_POST["Id"];
+	$result= $this->branboxModel->getVideoEdit($id);
+	if($result[0]['status']=="ON")
+	{
+	    $active="OFF"; 
+	}
+	else
+	{
+	    $active="ON";    
+	}
+	$form_data=array(
+	'status'=>$active
+	);
+	$this->db->where('businessId',$businessId);
+	$this->db->where('id',$id);
+	$this->db->update('videoGallery', $form_data);
+	echo'{"active":"'.$active.'","businessId":"'.$id.'"}';
+    }
     function imageListAdd()
     {
  
 	$result['view']=$this->branboxModel->imageListAddNew();
 	redirect(base_url("branboxController/galleryAdd"));          
+    }
+    function videoListAdd()
+    {
+ 
+	$result['view']=$this->branboxModel->videoListAdd();
+	redirect(base_url("branboxController/videoAdd"));          
     }
 //    
 //    function imageView()
@@ -1179,5 +1242,186 @@ class branboxController extends CI_Controller {
 	$viewResult['result']=$this->branboxModel->deleteImageListRow($code);
 	redirect(base_url("branboxController/galleryAdd"));
     }
+    function videoDelete($code)
+    {
+	$viewResult['result']=$this->branboxModel->deleteVideoListRow($code);
+	redirect(base_url("branboxController/videoAdd"));
+    }
+    //FeedBack 
+     //FeadBacks
+    
+    function feadBack()
+    {
+    	if($_POST['sendMess'])
+	{
+	    $result['endUserView']=$this->branboxModel->sendMessageToUser();
+	}
+	
+	$result['feedback']=$this->branboxModel->feedback();
+	$this -> load -> view('header');
+	$this -> load -> view('BusinessAdmin/feedBack',$result);
+    }
+    function feedBackDelete($id)
+    {
+	$result=$this->branboxModel->feedbackDelete($id);
+	if($result==1)
+	    echo $result;
+	else
+	    echo 0;
+    }
+    
+    //End User
+     function endUserView()
+    {
+	$result['endUserView']=$this->branboxModel->endUserView();
+	$this -> load -> view('header');
+	$this -> load -> view('BusinessAdmin/endUserView',$result);
+    }
+    
+    
+    function endUserAdd()
+    {
+	if($this->input->post("proceed") )
+	{
+	    $result=$this->branboxModel->endUserAdd();
+	    redirect(base_url('branboxController/endUserView'));
+	}
+	$this -> load -> view('header');
+	$this -> load -> view('BusinessAdmin/enduserAdd');
+    }
+    
+    function takeOrderForCustomer($cusId)
+    {
+	if($this->input->post("proceed") )
+	{
+	    $result=$this->branboxModel->endUserAdd();
+	    redirect(base_url('branboxController/takeOrderForCustomer'));
+	}
+	$this -> load -> view('header');
+	$this -> load -> view('BusinessAdmin/takeOrderForCustomer');
+    }
+    function endUserStatusUpdate()
+    {
+	$id=$_POST['id'];
+	$result=$this->branboxModel->endUserStatusUpdate($id);
+	echo '{"status":"'.$result.'"}';
+    }
+    // End User Email Verifitaion
+    
+    function endUserEmailVerification($businessId,$id)
+    {
+	$result['data']=$this->branboxModel->endUserEmailVerification($businessId,$id);
+	//print_r($result);
+	//exit;
+	$this->load-> view('BusinessAdmin/emailVerifitaionMessage',$result);
+    }
+    
+    //forgetpassword
+
+     function forgetPassword($businessId,$verificationCode,$id)
+    {
+       
+       
+        if($_POST['update']=='update')
+        {
+
+	   $result['data1']=$this->branboxModel->forgetPassword($businessId,$verificationCode,$id);
+         
+           $this->load-> view('BusinessAdmin/forgetPassword',$result);
+	
+         }
+          $result['data']=$this->branboxModel->GetForgetPassword($businessId,$verificationCode,$id);
+
+	 $this->load-> view('BusinessAdmin/forgetPassword',$result);
+    }
+
+     //queue system
+    function queueSystem($time)
+    {
+	$time= urldecode($time);
+	$this->branboxModel->queueSystem($time);
+	redirect(base_url("branboxController/dashboard"));
+    }
+    
+    function sendNotification()
+    {
+	if(isset($_POST['send'])){
+		
+		$checkSend = $this->input->post('sendAll');
+		$datas=$_POST['selectUser'];
+		$message = $_POST['messages'];
+		//print_r($checkSend);
+		//print_r($datas);
+		//print_r($message);
+		//exit;
+	    	$data['send'] = $this->branboxModel->sendNotification($checkSend,$datas,$message);
+	}
+	$data['user'] = $this->branboxModel->getNotification();
+	//print_r($data['user']);
+	//exit;
+	$this -> load -> view('header');
+	$this -> load -> view('BusinessAdmin/pushNotification',$data);
+    }   
+    
+    function queueTicketNotification()
+    {
+	if(isset($_POST['sendMess'])){
+	    $data['send'] = $this->branboxModel->sendQueueTicketNotification();
+	    redirect(base_url("branboxController/queueTicketNotification"));
+	}
+	$data['user'] = $this->branboxModel->getQueueTicketUsers();
+	$this -> load -> view('header');
+	$this -> load -> view('BusinessAdmin/queueTicketNotification',$data);
+    }
+    function ticketDelete($id)
+    {
+	$result=$this->branboxModel->ticketDelete($id);
+	if($result==1)
+	    echo $result;
+	else
+	    echo 0;
+    }
+    
+    function weitingStatus()
+    {
+	$busIs=$_POST['busId'];
+	$id=$_POST['Id'];
+	$result= $this->branboxModel->weitingStatus($id,$busIs);
+	//print_r($result);
+	if($result[0]['status']=="OFF")
+	{
+	    $status="ON";
+	    
+	}
+	$form_data=array(
+		    'status'=>$status,
+		    'arrived'=>'ON'
+		    );
+	$this->db->where('businessId',$busIs);
+	$this->db->where('id',$id);
+	$this->db->update('queuetoken', $form_data);
+	echo'{"status":"'.$status.'","businessId":"'.$id.'"}';
+	
+    }
+
+    function arrivedStatus()
+    {
+	$busIs=$_POST['busId'];
+	$id=$_POST['Id'];
+	$result= $this->branboxModel->weitingStatus($id,$busIs);
+	if($result[0]['arrived']=="ON")
+	{
+	    $arrived="OUT"; 
+	}
+	$form_data=array(
+		    'arrived'=>$arrived
+		    );
+	$this->db->where('businessId',$busIs);
+	$this->db->where('id',$id);
+	$this->db->update('queuetoken', $form_data);
+	echo'{"status":"'.$arrived.'","businessId":"'.$id.'"}';
+	
+    }   
+    
     
 }

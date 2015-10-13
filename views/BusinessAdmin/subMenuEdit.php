@@ -3,7 +3,24 @@
 Created on: 04/03/15
 Modified on: 24/03/15
 -->
-
+<style>
+        .container
+        {
+            position: absolute;
+            top: 10%; left: 10%; right: 0; bottom: 0;
+        }
+        .action
+        {
+            width: 400px;
+            height: 30px;
+            margin: 10px 0;
+        }
+        .cropped>img
+        {
+            margin-right: 10px;
+	    padding-bottom: 10px;
+        }
+    </style>
 <div id="content" class="content">
     <!-- begin breadcrumb -->
     <ol class="breadcrumb pull-right">
@@ -54,24 +71,41 @@ Modified on: 24/03/15
 				    <input type="text" name="name" id="name"  value="<?php echo $subMenu['name']; ?>" class="form-control" placeholder="Menu Name" />
 				</div>
 			    </div>
+			   
 			    <div class="form-group">
-				<label class="col-md-4 control-label">Sub Menu Image</label>
+				<label class="col-md-3 control-label">Menu Image</label>
 				<div class="col-md-5">
 				    <input type="hidden" name="oldImage" id="" value="<?php echo $subMenu['image']?>" >
-				    <img class="media-object superbox-img previewimage" id="show_image11" name="show_image" src="<?php echo $subMenu['image']; ?>">
-				     <input id="filestyle-11" class="filestyle" type="file" name='image' onchange="PreviewImage();" data-buttonbefore="true" style="position: absolute; clip: rect(0px, 0px, 0px, 0px);" tabindex="-1">
-				    <div class="bootstrap-filestyle input-group">
-					<span class="group-span-filestyle input-group-btn" tabindex="0">
-					    <label id="new" class="btn btn-default" for="filestyle-11">
-						<span class="glyphicon glyphicon-folder-open"></span>
-						Choose file
-					    </label>
-					</span>
-					<input class="form-control" id="filestyle-21" value="<?php $data=explode("/",$subMenu['image']); $count=count($data);  echo $data[$count-1]; ?>" type="text" readonly>
-				    </div>
+  				    <img class="media-object superbox-img previewimage" id="show_image11" name="show_image" src=" <?php echo $subMenu['image'];?>">
+				     <input id="filestyle-11" class="filestyle" type="file" name='image' onchange="PreviewImage();" data-buttonbefore="true"  style="position: absolute; clip: rect(0px, 0px, 0px, 0px);" tabindex="-1">
+				    <div class="action">
+				
+				<!--<input type="file" class="file" name="image" style="float:left; width: 250px">-->
+				
+				
+			    </div>
 				    
 				</div>
 			    </div>
+			    <div class="">
+			    <div class="imageBox hide" id="changeImage" >
+				<div class="thumbBox"><h3><center>Please select the image</center></h3></div>
+				<div class="spinner" style="display: none"></div>
+			    </div>
+			    <div class="action">
+				
+				<input type="file" class="file" onclick="changeImage();" name="image" style="float:left; width: 250px">
+				<input type="button" class="btn btn-primary" name="crop" id="btnCrop" value="Crop" style="float: right">
+				
+			    </div>
+			    <div class="cropped">
+				<input type="hidden" name="oldImage" id="" value="<?php echo $subMenu['image']?>" >
+				<img src="<?php echo base_url("upload/submenu/".$subMenu['image']);?>" class="imageId"  alt="" >
+				    <input type="hidden" value="" name="subMenuImage" id="subMenuImage">
+			    </div>
+			</div>
+			   
+			   
 			<!--    <div class="form-group">-->
 			<!--	<label class="col-md-4 control-label">Sub Menu Position</label>-->
 			<!--	<div class="col-md-5">-->
@@ -175,6 +209,13 @@ function form_reset() {
  
 }
 
+function changeImage()
+{
+     $("#show_image11").addClass("hide");
+    
+    $("#changeImage").removeClass("hide");
+    
+}
  function PreviewImage() {
     var image =document.getElementById("filestyle-11").value;
     $('#filestyle-21').val(image);
@@ -212,7 +253,40 @@ function form_reset() {
     });
 
     </script>
-	
+<script type="text/javascript">
+    YUI().use('node', 'crop-box', function(Y){
+        var options =
+        {
+            imageBox: '.imageBox',
+            thumbBox: '.thumbBox',
+            spinner: '.spinner',
+            imgSrc: 'avatar.png'
+        }
+        var cropper = new Y.cropbox(options);
+        Y.one('.file').on('change', function(){
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                options.imgSrc = e.target.result;
+                cropper = new Y.cropbox(options);
+            }
+            reader.readAsDataURL(this.get('files')._nodes[0]);
+            this.get('files')._nodes = [];
+        })
+        Y.one('#btnCrop').on('click', function(){
+            var img = cropper.getDataURL();
+	    subMenuImage
+	    $(".imageId").attr("src",img);
+	    $("#subMenuImage").val(img);
+	    
+            Y.one('.imageId').attr("src",img);
+        })
+      
+    })
+    //update button disabled Starts
+ 
+    //update button disabled Ends
+</script>	
+			
 	
 </body>
 

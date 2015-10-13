@@ -190,12 +190,10 @@
 			    var after=$("#validFromdate").val();
 			    var after = moment(after, 'YYYY/MM/DD').format('YYYY/MM/DD');
 			    if (new_value>after) {
-				
 				return true;
 			    }
 			     else
 			    {
-				
 				return false;
 			    }
 			   

@@ -35,7 +35,7 @@ $table=$this->session->userdata('table');
 			    </center >
 			    <hr>
 			     <?php if($table=='o'){?>
-			     <h4 style="text-align: center;">Food Oreder Receipt </h4>
+			     <h4 style="text-align: center;">Food Order Receipt </h4>
 			    <table class="table table-bordered" id="dataRespTable"  style="border: 1px solid black; border-collapse: collapse;" width="100%">
 				<caption>
 				   <span style="float:left;">
@@ -86,7 +86,7 @@ $table=$this->session->userdata('table');
 					    
 					    <td><?php  echo $data['quantity']; ?></td>
 					    
-					    <td><?php  echo $data['price']; ?></td>
+					    <td><?php $price=$this->branboxModel->getoffers($data['itemId']); if($price!=""){echo $price;} else { echo $data['price'];} ?></td>
 					    <td><?php  echo $data['totalPrice']; ?></td>
 					    <td><input type="checkbox" data-render="switchery" data-theme="green"  value="OFF" name="status[]" class="statusData" id="statusData"/></td>
 					</tr>
@@ -94,7 +94,7 @@ $table=$this->session->userdata('table');
 					    <?php
 						foreach( $getIngredients as $ingredient )
 						{
-						    if( $ingredient['itemId']==$data['itemId'] && $ingredient['subMenuId']==$data['subMenuId'] && $ingredient['createdTime']==$data['createdTime'] )
+						    if( $ingredient['itemId']==$data['itemId'] && $ingredient['subMenuId']==$data['subMenuId'] && $ingredient['createdTime']==$data['createdTime'] && $data['itemStorageId']==$ingredient['itemStorageId'] )
 						    {
 					    ?>
 							<td colspan="6">
@@ -112,7 +112,7 @@ $table=$this->session->userdata('table');
 								    
 									foreach( $getIngredients as $ingredient )
 									{
-									    if( $ingredient['itemId']==$data['itemId'] && $ingredient['subMenuId']==$data['subMenuId'] && $ingredient['createdTime']==$data['createdTime'] )
+									    if( $ingredient['itemId']==$data['itemId'] && $ingredient['subMenuId']==$data['subMenuId'] && $ingredient['createdTime']==$data['createdTime'] && $data['itemStorageId']==$ingredient['itemStorageId'] )
 									    {
 									    
 										?>
@@ -218,7 +218,7 @@ $table=$this->session->userdata('table');
 					    <?php
 						foreach( $getIngredients as $ingredient )
 						{
-						    if( $ingredient['itemId']==$data['itemId'] && $ingredient['subMenuId']==$data['subMenuId'] && $ingredient['createdTime']==$data['createdTime'] )
+						    if( $ingredient['itemId']==$data['itemId'] && $ingredient['subMenuId']==$data['subMenuId'] && $ingredient['createdTime']==$data['createdTime'] && $data['itemStorageId']==$ingredient['itemStorageId'] )
 						    {
 					    ?>
 							<td colspan="6">
@@ -236,7 +236,7 @@ $table=$this->session->userdata('table');
 								    
 									foreach( $getIngredients as $ingredient )
 									{
-									    if( $ingredient['itemId']==$data['itemId'] && $ingredient['subMenuId']==$data['subMenuId'] && $ingredient['createdTime']==$data['createdTime'] )
+									    if( $ingredient['itemId']==$data['itemId'] && $ingredient['subMenuId']==$data['subMenuId'] && $ingredient['createdTime']==$data['createdTime'] && $data['itemStorageId']==$ingredient['itemStorageId'] )
 									    {
 								    ?>    
 										<tr>
@@ -287,9 +287,31 @@ $table=$this->session->userdata('table');
 			    
 			    
 			    
-			    <h4 style="text-align: center;">Table Booking Receipt </h4>
+			   <h4 style="text-align: center;">Table Booking Receipt </h4>
 			    <table class="table table-bordered table-responsive" id="dataRespTable"  style="border: 1px solid black; border-collapse: collapse;" width="100%">
-				
+				<caption>
+				   <span style="float:left;">
+					<h5>Customer Details</h5>
+					<b>Name: &nbsp;&nbsp;</b> <?php  echo $data['userName']; ?> </br>
+					<b>Mobile Number: &nbsp;&nbsp;</b>
+					 <?php  echo $data['phoneNumber']; ?></br>
+				   </span>
+				   <span style="float: right;">
+					<h5>Customer Address Details</h5>
+					<b>Address: &nbsp;&nbsp;</b>
+					    <p>
+						<?php  echo $data['address1']; ?>,
+						<?php  echo $data['address2']; ?> </br>
+						<?php  echo $data['city']; ?>,
+						<?php  echo $data['state']; ?></br>
+						<?php  echo $data['country']; ?>,
+						<?php  echo $data['postalCode']; ?>
+					    </p>
+					
+					
+					
+				    </span>
+				</caption>
 				<thead>
 				    <tr>
 					<td>S.No</td>
@@ -297,7 +319,7 @@ $table=$this->session->userdata('table');
 					<td>Customer Name</td>
 					<td>No of Preson</td>
 					<td>Booking Time</td>
-					<td>Address</td>
+					<td>Status</td>
 					
 				    </tr>
 				 
@@ -310,14 +332,8 @@ $table=$this->session->userdata('table');
 					<td><?php  echo $data['id']; ?></td>
 					<td><?php  echo $data['userName']; ?></td>
 					<td><?php  echo $data['NoOfPerson']; ?></td>
-					<td><?php  echo $data['bookingDateTime']; ?></td>
-					<td>
-					    <?php  echo $data['address1']; ?>,<br>
-					    <?php  echo $data['address1']; ?>,<br>
-					    <?php  echo $data['city']; ?>,<br>
-					    <?php  echo $data['state']; ?>,<br>
-					    <?php  echo $data['country']."-".$data['postalCode']; ?>.
-					</td>
+					<td><?php  echo $data['bookingDate']." ".$data['bookingTime']; ?></td>
+					<td><input type="checkbox" data-render="switchery" data-theme="green"  value="OFF" name="status[]" class="statusData" id="statusData"/></td>
 					
 				    </tr>
 				    <?php }?>

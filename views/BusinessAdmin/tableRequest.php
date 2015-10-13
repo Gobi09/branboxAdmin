@@ -37,7 +37,7 @@
 					<tr>
 					    <td>
 						<?php if($row['status']=='ordered') {?>
-						<a href="<?php echo base_url("branboxController/orderAcceptance/".$row['id']."/".$row['endUserId']."/0/b")?>"><?php echo $row['userName']?></a>
+						<a href="<?php echo base_url("branboxController/orderAcceptance/".$row['endUserId']."/b")?>"><?php echo $row['userName']?></a>
 						<?php } else  echo $row['userName']; ?>
 					    </td>
 					<!--    <td>-->
@@ -45,22 +45,22 @@
 					<!--    </td>-->
 					    <td>
 						<?php if($row['status']=='ordered') {?>
-						<a href="<?php echo base_url("branboxController/orderAcceptance/".$row['id']."/".$row['endUserId']."/0/b")?>"><?php echo $row['NoOfPerson']?></a>
+						<a href="<?php echo base_url("branboxController/orderAcceptance/".$row['endUserId']."/b")?>"><?php echo $row['NoOfPerson']?></a>
 						<?php } else  echo $row['NoOfPerson']; ?>
 					    </td>
 					    <td>
 						<?php if($row['status']=='ordered') {?>
-						<a href="<?php echo base_url("branboxController/orderAcceptance/".$row['id']."/".$row['endUserId']."/0/b")?>"><?php echo $row['bookingDateTime']?></a>
-						<?php } else  echo $row['bookingDateTime']; ?>
+						<a href="<?php echo base_url("branboxController/orderAcceptance/".$row['endUserId']."/b")?>"><?php echo $row['bookingDate']." ".$row['bookingTime']; ?></a>
+						<?php } else  echo $row['bookingDate']." ".$row['bookingTime']; ?>
 					    </td>
 					    <td>
 						<?php if($row['status']=='ordered') {?>
-						<a href="<?php echo base_url("branboxController/orderAcceptance/".$row['id']."/".$row['endUserId']."/0/b")?>"><?php echo $row['createdTime']?></a>
+						<a href="<?php echo base_url("branboxController/orderAcceptance/".$row['endUserId']."/b")?>"><?php echo $row['createdTime']?></a>
 						<?php } else  echo $row['createdTime']; ?>
 					    </td>
 					    <td>
 						<?php if($row['status']=='ordered') {?>
-						<a href="<?php echo base_url("branboxController/orderAcceptance/".$row['id']."/".$row['endUserId']."/0/b")?>"><?php echo $row['status']?></a>
+						<a href="<?php echo base_url("branboxController/orderAcceptance/".$row['endUserId']."/b")?>"><?php echo $row['status']?></a>
 						<?php } else  echo $row['status']; ?>
 					    </td>
 					    <td>

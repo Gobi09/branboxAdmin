@@ -13,7 +13,7 @@ $(function() {
     		//alert(list_sortable);
 		// change order in the database using Ajax
             $.ajax({
-                url: 'http://localhost/branboxAdmin/branboxController/repositionMenuOrder',
+                url: 'http://appnlogic.com/branboxAdmin/branboxController/repositionMenuOrder',
                 type: 'POST',
                 data: {position:list_sortable},
                 success: function(data) {

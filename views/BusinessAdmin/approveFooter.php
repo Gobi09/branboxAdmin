@@ -83,15 +83,25 @@ var number=0;
 	       if (now == after)
 	       {
 		    if (total_count==checked_count) {
-			 alert
-		    $('#submit_but').removeAttr('disabled');    
+		    	$('#submit_but').removeAttr('disabled');    
 		    }
 		    else{
-			  $('#submit_but').attr('disabled', "true");    
+			 $('#submit_but').attr('disabled', "true");    
+
 		     }
 	       }
 	       
-	<?php } ?>
+	<?php } else if($table=='b'){?>
+	  
+	        if (total_count==checked_count) {
+		$('#submit_but').removeAttr('disabled');     
+	  }
+	  else{
+	       $('#submit_but').attr('disabled', "true");    
+	  }
+	  
+	  <?php } ?>
+     
      
     });
 

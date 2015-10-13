@@ -1,4 +1,3 @@
-
 <!--Author: gobi.C
 Created on: 04/03/15
 Modified on: 24/03/15
@@ -59,6 +58,7 @@ Modified on: 24/03/15
 				    <label class="col-md-3 control-label">Latitude</label>
 				    <div class="col-md-5">
 					<input type="text" id="latbox" name="lat" class="form-control" placeholder="Latitude" readonly />
+					<input type="hidden" id="image" name="image" class="form-control" value=""/>
 				    </div>
 				</div>
 				<div class="form-group">
@@ -206,6 +206,9 @@ function codeAddress() {
              var longitude = results[0].geometry.location.lng();
             document.getElementById('latbox').value=latitude;
             document.getElementById('lngbox').value=longitude;
+            
+            var imageMap='https://maps.googleapis.com/maps/api/staticmap?zoom=18&size=700x400&maptype=roadmap&markers=color:RED%7Clabel:B|'+latitude+','+longitude;
+	    document.getElementById('image').value=imageMap;
             
             map.setCenter(results[0].geometry.location);
             var marker = new google.maps.Marker({

@@ -1,4 +1,3 @@
-
 <!-- begin #content -->
 <style>
     #pagination{
@@ -66,7 +65,25 @@ background:#58B0E7;
 background:-moz-linear-gradient(top, #B4F6FF 1px, #63D0FE 1px, #58B0E7);
 background:-webkit-gradient(linear, 0 0, 0 100%, color-stop(0.02, #B4F6FF), color-stop(0.02, #63D0FE), color-stop(1, #58B0E7));
 }
+
+.container
+{
+  
+    top: 0%; left: 0%; right: 0; bottom: 0;
+}
+.action
+{
+    width: 400px;
+    height: 88px;
+    margin: 10px 0;
+}
+.cropped>img
+{
+    margin-right: 10px;
+    padding-bottom: 10px;
+}
 </style>
+
 <div id="content" class="content">
     <!-- begin breadcrumb -->
     <ol class="breadcrumb pull-right">
@@ -95,22 +112,24 @@ background:-webkit-gradient(linear, 0 0, 0 100%, color-stop(0.02, #B4F6FF), colo
 		    <p style="color: #EB4688"><?php if (isset($error_message)) { echo $error_message; } ?></p>		   
 		    <div class="col-md-offset-1 col-md-7">
 			<form id="form_validation" method="POST" enctype="multipart/form-data" action="<?php echo base_url('branboxController/imageListAdd'); ?>" class="form-horizontal">
-			    <div class="form-group">
-				<label class="col-md-3 control-label"></label>
-				<div class="col-md-5">
-				   <img class="media-object superbox-img previewimage" id="show_image11" name="show_image" src="<?php echo base_url("assets/img/user-15.jpg");?>">
-				    <input id="filestyle-11" class="filestyle" type="file" name='image' onchange="PreviewImage();" data-buttonbefore="true" style="position: absolute; clip: rect(0px, 0px, 0px, 0px);" tabindex="-1">
-				    <div class="bootstrap-filestyle input-group">
-					<span class="group-span-filestyle input-group-btn" tabindex="0">
-					    <label id="new" class="btn btn-default" for="filestyle-11">
-						<span class="glyphicon glyphicon-folder-open"></span>
-						Choose file
-					    </label>
-					</span>
-					<input class="form-control" id="filestyle-21" value="" type="text" readonly>
-				    </div>
-				</div>
+			    <div class="">
+			   <!--<label class="">Menu Image</label>-->
+			    <div class="imageBox">
+				
+				<div class="thumbBox"><h3><center>Please select the image</center></h3></div>
+				<div class="spinner" style="display: none"></div>
 			    </div>
+			    <div class="action">
+				
+				<input type="file" class="file" name="image" style="float:left; width: 250px">
+				<input class="btn btn-primary" type="button" id="btnCrop" value="Crop" style="float: right">
+				
+			    </div>
+			    <div class="cropped">
+				<img src="" class="imageId"  alt="" >
+				    <input type="hidden" value="" name="galleryImage" id="galleryImage">
+			    </div>
+			</div>
 			    <div class="form-group">
 				<label class="col-md-3 control-label">Image Status</label>
 				<div class="col-md-5">
@@ -148,7 +167,7 @@ background:-webkit-gradient(linear, 0 0, 0 100%, color-stop(0.02, #B4F6FF), colo
 				<div class="col-md-3 ">
 				    <img class="" style="width:100%;height:150px" src="<?php echo ($viewShowResult['link']);?>" >
 				    <!--<p class="image-caption">-->
-					<h5 class="title"><?php echo $viewShowResult['link']?> <br></h5>
+					<h5 class="title"><?php $imgname=explode("/",$viewShowResult['link']); $count=count($imgname); echo $imgname[$count-1]; ?> <br></h5>
 					<h5 class="title">Size:<?php echo $viewShowResult['size']?> <br></h5>
 					<button <?php if($viewShowResult['active'] == "ON") echo 'class="btn btn-success m-r-5"'; else  echo 'class="btn btn-danger"';  ?> name="active" id="active-<?php echo $viewShowResult['id']; ?>"><?php echo $viewShowResult['active']; ?></button>
 					<script>
@@ -237,7 +256,36 @@ background:-webkit-gradient(linear, 0 0, 0 100%, color-stop(0.02, #B4F6FF), colo
     });
 //image for burtlan end
 </script>
-	
+	<script type="text/javascript">
+    YUI().use('node', 'crop-box', function(Y){
+        var options =
+        {
+            imageBox: '.imageBox',
+            thumbBox: '.thumbBox',
+            spinner: '.spinner',
+            imgSrc: 'avatar.png'
+        }
+        var cropper = new Y.cropbox(options);
+        Y.one('.file').on('change', function(){
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                options.imgSrc = e.target.result;
+                cropper = new Y.cropbox(options);
+            }
+            reader.readAsDataURL(this.get('files')._nodes[0]);
+            this.get('files')._nodes = [];
+        })
+        Y.one('#btnCrop').on('click', function(){
+            var img = cropper.getDataURL();
+	    galleryImage
+	    $(".imageId").attr("src",img);
+	    $("#galleryImage").val(img);
+	    
+            Y.one('.imageId').attr("src",img);
+        })
+      
+    })
+</script>
 	
 </body>
 

@@ -1,4 +1,3 @@
-
 $(function() {
     $('#sortable').sortable({
         axis: 'y',
@@ -9,7 +8,7 @@ $(function() {
     		//alert(list_sortable);
 		// change order in the database using Ajax
             $.ajax({
-                url: 'http://localhost/branboxAdmin/branboxController/repositionItemOrder',
+                url: 'http://appnlogic.com/branboxAdmin/branboxController/repositionItemOrder',
                 type: 'POST',
                 data: {position:list_sortable},
                 success: function(data) {

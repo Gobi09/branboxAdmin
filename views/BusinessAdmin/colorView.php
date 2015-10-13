@@ -35,9 +35,9 @@
 			<!--<div class="col-md-offset-1 col-md-10">-->
 			<input type="hidden" id="row_contains" name="row_contains" value="1" />			    			
 			 <div class="form-group">
-				<label class="col-md-3 control-label">Favicon Image</label>
+				<label class="col-md-3 control-label">Logo Image</label>
 				<div class="col-md-2">
-				    <img class="media-object superbox-img previewimage" id="show_image11" name="show_image" src="<?php if(isset($color['favIcon']))echo base_url("upload/table/".$color['favIcon']);else echo base_url("assets/img/user-15.jpg"); ?>">
+				    <img class="media-object superbox-img previewimage" id="show_image11" name="show_image" src="<?php if(isset($color['favIcon']))echo $color['favIcon'];else echo base_url("assets/img/user-15.jpg"); ?>">
 				</div>
 			     </div>
 			     
@@ -51,7 +51,7 @@
 					<span class="group-span-filestyle input-group-btn" tabindex="0">
 					    <label id="new" class="btn btn-default" for="filestyle-11">
 						<span class="glyphicon glyphicon-folder-open"></span>
-						Choose file
+						Choose Logo
 					    </label>
 					</span>
 					<input class="form-control" name="oldImage" id="filestyle-21" value="<?php if(isset($color['favIcon'])) echo $color['favIcon']; else echo "";?>" name="" type="text" readonly>
@@ -60,12 +60,10 @@
 			    </div>				    
 			</div>
 			<div class="form-group">
-			    <label class="col-md-3 control-label">Banner Image</label>
-			    <!--<div class="col-md-4">-->
+			    <label class="col-md-3 control-label">Side Menu header Image</label>
 			    <div class="form-group">
-				<!--<label class="col-md-3 control-label">Sub Menu Image</label>-->
 				<div class="col-md-5">
-				    <img class="media-object superbox-img previewimage" id="show_image111" name="show_image" src="<?php  if(isset($color['bannerImage']))echo base_url("upload/table/".$color['bannerImage']);else echo base_url("assets/img/user-15.jpg");?>">
+				    <img class="media-object superbox-img previewimage" id="show_image111" name="show_image" src="<?php  if(isset($color['bannerImage']))echo $color['bannerImage']; else echo base_url("assets/img/user-15.jpg");?>">
 				    <input id="filestyle-111" class="filestyle" type="file" name='image1' onchange="PreviewImage1();" data-buttonbefore="true" style="position: absolute; clip: rect(0px, 0px, 0px, 0px);" tabindex="-1">
 				    <div class="bootstrap-filestyle input-group">
 					<span class="group-span-filestyle input-group-btn" tabindex="0">
@@ -82,89 +80,28 @@
 			    <div class="form-group">
 				<label class="col-md-3 control-label">Currency Format</label>
 				<div class="col-md-4">
-				  <input type="text" name="currencyFormat" id="currencyFormat" value="<?php if(isset($color['currencyFormat'])) echo $color['currencyFormat']; else echo "AED"; ?>" class="form-control" placeholder="Currency Format" />
-				    <!--<input type="text" data-toggle="tooltip" data-placement="top" data-original-title="Format is -90.0000&deg;N or +90.0000&deg;S" name="ct_latitude" id="ct_latitude"  class="form-control" placeholder="CT_LATITUDE" />-->
+				    <input type="text" name="currencyFormat" id="currencyFormat" value="<?php if(isset($color['currencyFormat'])) echo $color['currencyFormat']; else echo "AED"; ?>" class="form-control" placeholder="Currency Format" />
 				</div>    
 			    </div>
-			    <div class="form-group">
-				<label class="col-md-3 control-label">Created Time</label>
-				<div class="col-md-4">
-				  <input type="text" value="<?php echo $date = date("Y-m-d H:i:s"); ?>" name="createdTime" id="createdTime" class="form-control" placeholder="Created Time" />
-				    <!--<input type="text" data-toggle="tooltip" data-placement="top" data-original-title="Format is -90.0000&deg;N or +90.0000&deg;S" name="ct_latitude" id="ct_latitude"  class="form-control" placeholder="CT_LATITUDE" />-->
-				</div>    
-			    </div>
-			    <div class="form-group">
-				<label for="input-text" class="col-md-3 control-label">Color</label>				
-				<div id="windowBackgroundColorDiv" class=""   data-color="#400000">				
-				    <div class="col-md-4 ">
-					<input class="form-control color" id="windowBackgroundColor" value="<?php if(isset($color['color'])) echo $color['color']; else echo "#c84e4e"; ?>" name="color" type="text" value="" placeholder="Color">
-					
-				    </div>				  
-				</div>
-			    </div>
-			    <div class="form-group">
-				<label for="input-text" class="col-md-3 control-label">Font Color</label>				
-				<div id="windowBackgroundColorDiv" class=""   data-color="#400000">				
-				    <div class="col-md-4 ">
-					<input class="form-control color" id="windowBackgroundColor" value="<?php if(isset($color['fontColor'])) echo $color['fontColor']; else echo "#c84e4e";?>" name="fontColor" type="text" placeholder="Font Color" value="">
-					
-				    </div>				  
-				</div>
-			    </div>
-			    <div class="form-group">
-				<label for="input-text" class="col-md-3 control-label">Font Hover Color</label>				
-				<div id="windowBackgroundColorDiv" class=""   data-color="#400000">				
-				    <div class="col-md-4 ">
-					<input class="form-control color" id="windowBackgroundColor" value="<?php if(isset($color['fontHoverColor'])) echo $color['fontHoverColor']; else echo "#c84e4e";?>" placeholder="Font Hover Color" name="fontHoverColor" type="text" value="">
-					
-				    </div>				  
-				</div>
-			    </div>
+			   
 			    <div class="form-group">
 				<label for="input-text" class="col-md-3 control-label">Header Color</label>				
 				<div id="windowBackgroundColorDiv" class=""   data-color="#400000">				
 				    <div class="col-md-4 ">
-					<input class="form-control color" id="windowBackgroundColor" value="<?php if(isset($color['headerColor'])) echo $color['headerColor']; else echo "#c84e4e";?>" name="headerColor" placeholder="Header Color" type="text" value="">
-					
+					<input class="form-control color" id="windowBackgroundColor" value="<?php if(isset($color['color'])) echo $color['color']; else echo "#c84e4e"; ?>" name="color" type="text" value="" placeholder="Color">
 				    </div>				  
 				</div>
 			    </div>
-			    <div class="form-group">
-				<label for="input-text" class="col-md-3 control-label">Header Icon Hover Color</label>				
-				<div id="windowBackgroundColorDiv" class=""   data-color="#400000">				
-				    <div class="col-md-4 ">
-					<input class="form-control color" id="windowBackgroundColor" value="<?php if(isset($color['headerIconHoverColor'])) echo $color['headerIconHoverColor']; else echo "#c84e4e";?>" name="headerIcnHovercolor" placeholder="Header Icon Hover Color" type="text" value="">
-					
-				    </div>				  
-				</div>
-			    </div>
-			    <div class="form-group">
-				<label for="input-text" class="col-md-3 control-label">Menu Hover Color</label>				
-				<div id="windowBackgroundColorDiv" class=""   data-color="#400000">				
-				    <div class="col-md-4 ">
-					<input class="form-control color" id="windowBackgroundColor" value="<?php if(isset($color['menuHoverColor'])) echo $color['menuHoverColor']; else echo "#c84e4e";?>" placeholder="Menu Hover Color" name="MenuHovColor" type="text" value="">
-					
-				    </div>				  
-				</div>
-			    </div>
-			    <div class="form-group">
-				<label for="input-text" class="col-md-3 control-label">Menu Item Selected Color</label>				
-				<div id="windowBackgroundColorDiv" class=""   data-color="#400000">				
-				    <div class="col-md-4 ">
-					<input class="form-control color" id="windowBackgroundColor" value="<?php if(isset($color['menuItemSelectorColor'])) echo $color['menuItemSelectorColor']; else echo "#c84e4e";?>" placeholder="Menu Item Selected Color" name="menuItemSelctcolor" type="text" value="">
-					
-				    </div>				  
-				</div>
-			    </div>
+			   
 			    
 			    <div class="col-md-offset-3 col-md-6">
-				 <div class="form-group">
-				    <label class="col col-4"></label>
-				    <button class="btn btn-md btn-danger " onclick="window.history.back();" type="button"> Cancel </button>
-				    <button class="btn btn-md btn-info " onclick=" form_reset();" id="clear_data" type="button"> Reset </button>
-				    <input type="submit" class="btn btn-md btn-success"  name="update" id="submit_but" value="<?php if(isset($color)) echo "Update"; else echo "Save";?>" >
-				 </div>
-			      </div>                          
+				<div class="form-group">
+				   <label class="col col-4"></label>
+				   <button class="btn btn-md btn-danger " onclick="window.history.back();" type="button"> Cancel </button>
+				   <button class="btn btn-md btn-info " onclick=" form_reset();" id="clear_data" type="button"> Reset </button>
+				   <input type="submit" class="btn btn-md btn-success"  name="update" id="submit_but" value="<?php if(isset($color)) echo "Update"; else echo "Save";?>" >
+				</div>
+			    </div>                          
 			</form>		   
 		</div>
 	    </div>

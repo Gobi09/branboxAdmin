@@ -72,6 +72,14 @@ class branboxModel extends CI_Model {
 	//print_r($query);
 	return $query;
     }
+    public function getoffers($itemId)
+    {
+	$sql= "select t1.* FROM offer t1 join itemorder t2 on  t1.itemId = t2.itemId  where t2.orderType='offer' and t2.itemId='$itemId' ";
+	$query= $this->db->query($sql, $return_object = TRUE)->result_array();
+	return $query[0]['price'];
+	
+	
+    }
     
     public function orderAcceptance($id,$table)
     {
@@ -113,7 +121,7 @@ class branboxModel extends CI_Model {
 	}
 	else if($table=='b')
 	{
-	   $sql= "SELECT s.id,s.endUserId,s.NoOfPerson,s.bookingDateTime,s.createdTime,s.status, j.userName,j.address1,j.address2,j.city,j.state,j.country,j.postalCode,j.phoneNumber,j.email FROM booktable s INNER JOIN enduser j ON s.businessId = j.businessId  and s.endUserId= j.id  where  s.status='ordered' and s.id='$id' and s.endUserId='$userId' and  s.businessId='$businessId'";
+	   $sql= "SELECT s.id,s.endUserId,s.NoOfPerson,s.bookingDate,s.bookingTime,s.createdTime,s.status, j.userName,j.address1,j.address2,j.city,j.state,j.country,j.postalCode,j.phoneNumber,j.email FROM booktable s INNER JOIN enduser j ON s.businessId = j.businessId  and s.endUserId= j.id  where  s.status='ordered' and s.endUserId='$id' and  s.businessId='$businessId'";
 	    //$sql= "select t1.*,t2.* FROM tablelist t1 join booktable t2 on  t1.id = t2.tableId and t2.businessId = t1.businessId and t2.id='$id'  and t2.endUserId='$userId' where t2.businessId='$businessId' ";
 	    //$sql="select *  FROM booktable where businessId = '$businessId' and id='$id' and tableId='$itemId' and endUserId='$userId'";
 	    $query['data1'] = $this->db->query($sql, $return_object = TRUE)->result_array();
@@ -155,9 +163,16 @@ class branboxModel extends CI_Model {
     
     //Order Approve Start
     public function orderApproved($id,$userId,$itemId,$table)
-    {
+        {
 	$businessId=$this->session->userdata('businessId');
 	
+	    
+	    //echo "<pre>";
+	    //echo $id.$userId.$itemId.$table;
+	    //exit;
+	   
+	   
+	   
 	if($table="o")
 	{
 	    
@@ -177,12 +192,21 @@ class branboxModel extends CI_Model {
 		    if($_POST['dateTime'][$i]==$data['createdTime'])
 		    {
 			
-			$id=$data['id'];
+			$orderId=$data['id'];
 			$endUserId=$data['endUserId'];
 			$itemId=$data['itemId'];
 			
-			$sql="UPDATE itemorder SET status='Approved' WHERE id='$id' and endUserId='$endUserId' and itemId='$itemId' and businessId='$businessId' and timedDate='o'";
+			$sql="UPDATE itemorder SET status='Approved' WHERE id='$orderId' and endUserId='$endUserId' and itemId='$itemId' and businessId='$businessId' and timedDate='o'";
 			$datatabel=$this->db->query($sql);
+			
+			//$this->db->where('id',$data['id']);
+			//$this->db->where('endUserId',$data['endUserId']);
+			//$this->db->where('itemId',$data['itemId']);
+			//$this->db->where('businessId',$businessId);
+			//$datatabel=$this->db->update('itemorder', $form_data);
+			//echo $_POST['dateTime'][$i]."<br>";
+			//echo $data['createdTime']."-".$data['itemId']."-".$data['id']."<br>";
+			
 		    }
 		}
 	    }
@@ -196,9 +220,10 @@ class branboxModel extends CI_Model {
 			$form_data=array(
 			    'status'=>"Approved"
 			    );
-			$sql="UPDATE orderitemcount SET status='Approved' WHERE userId='$userId' and businessId='$businessId' and timedDelivery='NO'";
-			$datatabel=$this->db->query($sql);
-			
+			$this->db->where('userId',$userId);
+			$this->db->where('businessId',$businessId);
+			$this->db->where('timedDelivery','NO');
+			$this->db->update('orderItemCount', $form_data);
 		    }
 		}
 	    }
@@ -224,15 +249,22 @@ class branboxModel extends CI_Model {
 		    
 		    if($_POST['dateTime'][$i]==$data['createdTime'])
 		    {
-			$id=$data['id'];
+			$orderId=$data['id'];
 			$endUserId=$data['endUserId'];
 			$itemId=$data['itemId'];
 			
 			$form_data=array(
 			    'status'=>"Approved"
 			    );
-			$sql="UPDATE itemorder SET status='Approved' WHERE id='$id' and endUserId='$endUserId' and itemId='$itemId' and businessId='$businessId' and timedDate<>'o'";
+			$sql="UPDATE itemorder SET status='Approved' WHERE id='$orderId' and endUserId='$endUserId' and itemId='$itemId' and businessId='$businessId' and timedDate<>'o'";
 			$datatabel=$this->db->query($sql);
+			//$this->db->where('id',$data['id']);
+			//$this->db->where('endUserId',$data['endUserId']);
+			//$this->db->where('itemId',$data['itemId']);
+			//$this->db->where('businessId',$businessId);
+			//$datatabel=$this->db->update('itemorder', $form_data);
+			//echo $_POST['dateTime'][$i]."<br>";
+			//echo $data['createdTime']."-".$data['itemId']."-".$data['id']."<br>";
 			
 		    }
 		}
@@ -250,7 +282,7 @@ class branboxModel extends CI_Model {
 			$this->db->where('userId',$userId);
 			$this->db->where('businessId',$businessId);
 			$this->db->where('timedDelivery','YES');
-			$this->db->update('orderitemcount', $form_data);
+			$this->db->update('orderItemCount', $form_data);
 		    }
 		}
 	    }
@@ -273,6 +305,7 @@ class branboxModel extends CI_Model {
 	
 	
     }
+
     //Order Approve End
     
     //Dashboard
@@ -454,13 +487,16 @@ class branboxModel extends CI_Model {
 	$count=$this->getMenu();
 	
 	$businessId=$this->session->userdata('businessId');
-	$url=$config['upload_path'] ='upload/menu/';
-	$config['allowed_types'] = 'gif|jpg|png';
-	$this->load->library('upload', $config);
-	$this->upload->do_upload('image');
-	$path =  $this->upload->data();
-	$path1=base_url().$url.$path['file_name'];
-	
+	$url='upload/menu/';
+	$new_name = time()."_".$businessId."_".$_FILES["image"]['name'];
+	$url='upload/menu/'.$new_name;
+	file_put_contents(
+	    $url,
+	    base64_decode( 
+		str_replace('data:image/png;base64,', '', $this->input->post("menuImage"))
+	    )
+	);
+        $url=base_url().$url;
 	if($this->input->post("status")!="ON")
 	{
 	    $status="OFF";
@@ -480,14 +516,15 @@ class branboxModel extends CI_Model {
 	$data=array(
 	    "businessId"=>$businessId,
 	    "name"=>$this->input->post("name"),
-	    "image"=>$path1,
+	    "image"=>$url,
 	    "position"=>count($count)+1,
 	    "status"=>$status,
 	    "online"=>$online,
 	);
 	
-	return $this->db->insert("menu",$data);
-	
+	$this->db->insert("menu",$data);
+	//print_r($data);
+	//exit;
     }
     
     
@@ -495,16 +532,20 @@ class branboxModel extends CI_Model {
     {
 	if($_FILES['image']['name']=="")
     	{
-    	    $path1=$this->input->post('oldImage');
+    	    $url=$this->input->post('oldImage');
 	}	
 	else
 	{
-	$url=$config['upload_path'] ='upload/menu/';
-	$config['allowed_types'] = 'gif|jpg|png';
-	$this->load->library('upload', $config);
-	$this->upload->do_upload('image');
-	$path =  $this->upload->data();
-	$path1=base_url().$url.$path['file_name'];
+		$url='upload/menu/';
+		$new_name = time()."_".$businessId."_".$_FILES["image"]['name'];
+		$url='upload/menu/'.$new_name;
+		file_put_contents(
+		    $url,
+		    base64_decode( 
+			str_replace('data:image/png;base64,', '', $this->input->post("menuImage"))
+		    )
+		);
+	        $url=base_url().$url;
 	}
 	
 	
@@ -527,7 +568,7 @@ class branboxModel extends CI_Model {
 	$businessId=$this->session->userdata('businessId');
 	$data=array(
 	    "name"=>$this->input->post("name"),
-	    "image"=>$path1,
+	    "image"=>$url,
 	    "status"=>$status,
 	    "online"=>$online,
 	);
@@ -580,12 +621,16 @@ class branboxModel extends CI_Model {
     {
 	$count=$this->getSubMenu();
 	
-	$url=$config['upload_path'] ='upload/submenu/';
-	$config['allowed_types'] = 'gif|jpg|png';
-	$this->load->library('upload', $config);
-	$this->upload->do_upload('image');
-	$path =  $this->upload->data();
-	$path1=base_url().$url.$path['file_name'];
+	$url='upload/submenu/';
+	$new_name = time()."_".$businessId."_".$_FILES["image"]['name'];
+	$url='upload/submenu/'.$new_name;
+	file_put_contents(
+	    $url,
+	    base64_decode( 
+		str_replace('data:image/png;base64,', '', $this->input->post("subMenuImage"))
+	    )
+	);
+	
 	if($this->input->post("status")!="ON")
 	{
 	    $status="OFF";
@@ -607,7 +652,7 @@ class branboxModel extends CI_Model {
 	    "businessId"=>$businessId,
 	    "menuId"=>$this->input->post("menuId"),
 	    "name"=>$this->input->post("name"),
-	    "image"=>$path1,
+	    "image"=>base_url().$url,
 	    "position"=>count($count)+1,
 	    "status"=>$status,
 	    "online"=>$online,
@@ -621,16 +666,23 @@ class branboxModel extends CI_Model {
     {
 	if($_FILES['image']['name']=="")
     	{
-    	    $logo=$this->input->post('oldImage');
+    	    $url=$this->input->post('oldImage');
 	}	
 	else
 	{
-	    $url=$config['upload_path'] ='upload/submenu/';
-	    $config['allowed_types'] = 'gif|jpg|png';
-	    $this->load->library('upload', $config);
-	    $r=$this->upload->do_upload('image');
-	    $data =  $this->upload->data();
-	    $logo=base_url().$url.$data['file_name'];
+	    $url='upload/submenu/';
+		$new_name = time()."_".$businessId."_".$_FILES["image"]['name'];
+		$url='upload/submenu/'.$new_name;
+		file_put_contents(
+		    $url,
+		    base64_decode( 
+			str_replace('data:image/png;base64,', '', $this->input->post("subMenuImage"))
+		    )
+		);
+	        $url=base_url().$url;
+            //$type = pathinfo($logo, PATHINFO_EXTENSION);
+	   // $data = file_get_contents($logo);
+	    //$arrayData= 'data:image/' . $type . ';base64,' . base64_encode($data);
 	}
 	
 	
@@ -655,7 +707,7 @@ class branboxModel extends CI_Model {
 	   
 	 
 	    "name"=>$this->input->post("name"),
-	    "image"=>$logo,
+	    "image"=> $url,
 	    "status"=>$status,
 	    "online"=>$online,
 	);
@@ -715,12 +767,21 @@ class branboxModel extends CI_Model {
     {
 	$businessId=$this->session->userdata('businessId');
 	$count=$this->getSubMenuItem();
-	$url=$config['upload_path'] ='upload/item/';
-	$config['allowed_types'] = 'gif|jpg|png';
-	$this->load->library('upload', $config);
-	$r=$this->upload->do_upload('image');
-	$data =$this->upload->data();
-	$logo=base_url().$url.$data['file_name'];
+	$url='upload/item/';
+	$new_name = time()."_".$businessId."_".$_FILES["image"]['name'];
+	$url='upload/item/'.$new_name;
+	file_put_contents(
+	    $url,
+	    base64_decode( 
+		str_replace('data:image/png;base64,', '', $this->input->post("subMenuItemImage"))
+	    )
+	);
+	
+        
+       // $type = pathinfo($path1, PATHINFO_EXTENSION);
+	//$data = file_get_contents($logo);
+	//$arrayData= 'data:image/' . $type . ';base64,' . base64_encode($data);
+
 	if($this->input->post("status")!="ON")
 	{
 	    $status="OFF";
@@ -742,7 +803,7 @@ class branboxModel extends CI_Model {
 	    "menuId"=>$this->input->post("menuId"),
 	    "subMenuId"=>$this->input->post("subMenuId"),
 	    "name"=>$this->input->post("name"),
-	    "image"=>$logo,
+	    "image"=>$url,
 	    "price"=>$this->input->post("price"),
 	    "tax"=>$this->input->post("tax"),
 	    "offers"=>$this->input->post("offers"),
@@ -780,16 +841,25 @@ class branboxModel extends CI_Model {
     {
 	if($_FILES['image']['name']=="")
     	{
-    	    $logo=$this->input->post('oldImage');
+    	    $url=$this->input->post('oldImage');
 	}	
 	else
 	{
-	    $url=$config['upload_path'] ='upload/item/';
-	    $config['allowed_types'] = 'gif|jpg|png';
-	    $this->load->library('upload', $config);
-	    $r=$this->upload->do_upload('image');
-	    $data =  $this->upload->data();
-	    $logo=base_url().$url.$data['file_name'];
+	     $url='upload/item/';
+		$new_name = time()."_".$businessId."_".$_FILES["image"]['name'];
+		$url='upload/item/'.$new_name;
+		file_put_contents(
+		    $url,
+		    base64_decode( 
+			str_replace('data:image/png;base64,', '', $this->input->post("subMenuItemImage"))
+		    )
+		);
+	        $url=base_url().$url;
+         
+           // $type = pathinfo($logo, PATHINFO_EXTENSION);
+	    //$data = file_get_contents($logo);
+	   // $arrayData= 'data:image/' . $type . ';base64,' . base64_encode($data);
+
 	}
 	
 	
@@ -816,7 +886,7 @@ class branboxModel extends CI_Model {
 	    "menuId"=>$this->input->post("menuId"),
 	    "subMenuId"=>$this->input->post("subMenuId"),
 	    "name"=>$this->input->post("name"),
-	    "image"=>$logo,
+	    "image"=>$url,
 	    "price"=>$this->input->post("price"),
 	    "tax"=>$this->input->post("tax"),
 	    "garnish"=>$this->input->post("garnish"),
@@ -829,10 +899,11 @@ class branboxModel extends CI_Model {
 	$this->db->where('menuId',$menuId);
 	$this->db->where('subMenuId',$subMenuId);
         $result=  $this->db->update('submenuitem',$data);
-	$count=count($this->input->post("ingredients"));
+	$count=count($this->input->post("ingredientsId"));
+	
 	for($i=0;$i<$count;$i++)
 	{
-	    $dataingredients=array(
+	    $dataingredientsold=array(
 		"ingredients"=>$_POST['ingredients'][$i],
 		"price"=>$_POST['ingPrice'][$i],
 		"category"=>$_POST['category'][$i]
@@ -842,25 +913,31 @@ class branboxModel extends CI_Model {
 	    $this->db->where('itemId',$itemId);
 	    $this->db->where('menuId',$menuId);
 	    $this->db->where('subMenuId',$subMenuId);
-	    $result=  $this->db->update('ingredients',$dataingredients);
-	   
+	    $result=  $this->db->update('ingredients',$dataingredientsold);
+	   //echo "<pre>";
+	   // //echo $insert_id;
+	   // echo $count;
+	   // print_r($dataingredientsold);
+	   // echo "</pre>";
 	}
-	$count=count($this->input->post("ingredients1"));
-	for($i=0;$i<$count-1;$i++)
+	
+	$countnew=count($this->input->post("ingredients1"));
+	$countnew-=1;
+	for($j=0;$j<$countnew;$j++)
 	{
 	    $dataingredients=array(
 		"businessId"=>$businessId,
 		"menuId"=>$menuId,
 		"subMenuId"=>$subMenuId,
 		"itemId"=>$itemId,
-		"ingredients"=>$_POST['ingredients'][$i],
-		"price"=>$_POST['ingPrice'][$i],
-		"category"=>$_POST['category'][$i]
+		"ingredients"=>$_POST['ingredients'][$count+$j],
+		"price"=>$_POST['ingPrice'][$count+$j],
+		"category"=>$_POST['category'][$count+$j]
 	    );
 	    $this->db->insert("ingredients",$dataingredients);
 	    //echo "<pre>";
 	    ////echo $insert_id;
-	    //echo $count;
+	    //echo $countnew;
 	    //print_r($dataingredients);
 	    //echo "</pre>";
 	}
@@ -923,6 +1000,11 @@ class branboxModel extends CI_Model {
 	$address=explode(",",$_POST['location']);
 	$count=count($address);
 	
+	$contents=file_get_contents($_POST['image']);
+	$new_name = time()."_".$businessId."_"."location.jpg";
+	$save_path='upload/location/'.$new_name;
+	file_put_contents($save_path,$contents);
+	
 	$dataingredients=array(
 	   "businessId"=>$businessId,
 	   "branchname"=>$_POST['branch'],
@@ -931,6 +1013,7 @@ class branboxModel extends CI_Model {
 	   "city"=>$address[$count-3],
 	   "latitude"=>$_POST['lat'],
 	   "longitude"=>$_POST['lng'],
+	   "image"=>base_url().$save_path,
 	   "status"=>$_POST['status']
 	   );
 	$this->db->insert("locations",$dataingredients);
@@ -974,6 +1057,9 @@ class branboxModel extends CI_Model {
 	$businessId=$this->session->userdata('businessId');
 	$date = date("Y-m-d H:i:s");
 	
+            $type = pathinfo($path1, PATHINFO_EXTENSION);
+	    $data = file_get_contents($logo);
+	    $arrayData= 'data:image/' . $type . ';base64,' . base64_encode($data);
 	if($this->input->post('status')=="ON")
 	{
 	$STATUS='ON';
@@ -994,7 +1080,7 @@ class branboxModel extends CI_Model {
 	    'businessId'  =>$businessId,
 	    'name'   =>  $this->input->post('name'),
 	    'feature'   =>  $this->input->post('feature'),
-	    'image'   =>  $path1,
+	    'image'   =>   $arrayData,
 	    'price'   =>  $this->input->post('price'),
 	    'status'   =>  $STATUS,
 	    'online'   =>  $ONLINE,
@@ -1010,7 +1096,7 @@ class branboxModel extends CI_Model {
     {
 	if($_FILES['image']['name']=="")
 	{
-	    $path1=$this->input->post('oldImage');
+	     $arrayData=$this->input->post('oldImage');
 	} 
 	else
 	{
@@ -1020,6 +1106,11 @@ class branboxModel extends CI_Model {
 	    $this->upload->do_upload('image');
 	    $path =  $this->upload->data();
 	    $path1=$path['file_name'];
+
+            $type = pathinfo($path1, PATHINFO_EXTENSION);
+	    $data = file_get_contents($logo);
+	    $arrayData= 'data:image/' . $type . ';base64,' . base64_encode($data);
+
 	}
 	$businessId=$this->session->userdata('businessId');
 	$date = date("Y-m-d H:i:s");
@@ -1043,7 +1134,7 @@ class branboxModel extends CI_Model {
 	$data=array(
 	    'name'   =>  $this->input->post('name'),
 	    'feature'   =>  $this->input->post('feature'),
-	    'image'   =>  $path1,
+	    'image'   =>  $arrayData,
 	    'price'   =>  $this->input->post('price'),
 	    'status'   =>  $STATUS,
 	    'online'   =>  $ONLINE,
@@ -1067,15 +1158,16 @@ class branboxModel extends CI_Model {
    
    
     
+     
      // Offer Start
     function offerView()
     {
 	$date=date('Y-m-d');
 	$businessId=$this->session->userdata('businessId');
-	//$sql="SELECT * FROM offer where businessId='$businessId' and Date(validUptodate) >= '$date' " ;
+	$sql="SELECT * FROM offer where businessId='$businessId' and Date(validUptodate) >= '$date' " ;
 	
-	$sql="SELECT o.*, i.name FROM offer o join submenuitem i on o.itemId=i.id where o.businessId='$businessId' and o.status='ON' and Date(o.validUptodate) >= '$date' " ;
-	$return =$this->db->query($sql, $return_object = TRUE)->result_array();
+	return $this->db->query($sql, $return_object = TRUE)->result_array();
+	
 	//echo "<pre>";
 	//print_r($return );
 	//exit;
@@ -1094,6 +1186,7 @@ class branboxModel extends CI_Model {
     
     function offerAdd()
     {
+    
 	$businessId=$this->session->userdata('businessId');
 	if($this->input->post('status')=="ON")
 	{
@@ -1132,14 +1225,16 @@ class branboxModel extends CI_Model {
     
     function offerUpdate($id)
     {
-	if($this->input->post('status')=="ON")
+	if($this->input->post('status')=='')
 	{
-	$STATUS='ON';
+	$editStatus='OFF';
 	}
 	else
 	{
-	$STATUS='OFF';
+	$editStatus=$this->input->post('status');
 	}
+	//echo $editStatus;
+	//exit;
 	
 	$businessId=$this->session->userdata('businessId');
 	
@@ -1156,12 +1251,14 @@ class branboxModel extends CI_Model {
 	    'validFromdate'       =>$this->input->post('validFromdate'),
 	    'validUptodate'       =>$this->input->post('validUptodate'),
 	    'Description' =>$this->input->post('description'),
-	    'status'=>$STATUS
+	    'status'=>$editStatus
 	);
 	$businessId=$this->session->userdata('businessId');
 	$this->db->where('businessId', $businessId); 
 	$this->db->where('id',$id);
-	return $this->db->update('offer',$data);  
+	$return =$this->db->update('offer',$data);  
+	//print_r ($data);
+	//exit;
     }
     
     function offerDelete($id)
@@ -1189,6 +1286,20 @@ class branboxModel extends CI_Model {
 	}
     }
     // About Us Start
+    
+     private function set_upload_options() //  upload an image options
+    {
+	$config = array();
+	$config['upload_path'] ='upload/aboutUs
+	
+	
+	';
+	$config['allowed_types'] ='*';
+	$config['max_size']      = '0';
+	$config['overwrite']     = FALSE;		
+	return $config;
+    }
+    
     function aboutUsEdit()
     {
 	$businessId=$this->session->userdata('businessId');
@@ -1198,19 +1309,87 @@ class branboxModel extends CI_Model {
     }
     
     function aboutUsUpdate()
-    {
-	echo "<pre>";
-	print_r($_POST);
-	exit;
+        {
+	$aboutImags="";
+	$this->load->library('upload');
+	$files = $_FILES;
+	
+	    //if($_FILES["Aboutgalleryimage"]["name"]=="")
+	    //{
+		//$data_count = count($_FILES['Aboutgalleryimage']['name']);
+	    
+		//echo "count ".$data_count;
+	       //exit;
+		//for ($i=0; $i<$data_count; $i++)
+		//{
+		    
+		///    $_FILES['userfile']['name']= $files['Aboutgalleryimage']['name'][$i];
+		//    $_FILES['userfile']['name']= $files['Aboutgalleryimage']['name'][$i];
+		//    $_FILES['userfile']['type']= $files['Aboutgalleryimage']['type'][$i];
+		 //   $_FILES['userfile']['tmp_name']= $files['Aboutgalleryimage']['tmp_name'][$i];
+		 //   $_FILES['userfile']['error']= $files['Aboutgalleryimage']['error'][$i];
+		 //   $_FILES['userfile']['size']= $files['Aboutgalleryimage']['size'][$i];    
+		    
+		    
+		   // $this->upload->initialize($this->set_upload_options());
+		   // $data=$this->upload->do_upload();
+		  //  $aboutImags =$aboutImags.base_url()."upload/aboutUsGallery/".$_FILES['userfile']['name'].",";
+		    
+		    
+		//}
+		//echo "new";
+	   // }
+	//else{
+	    
+	    $aboutImags = implode(",",$this->input->post('oldAboutUsImages'));
+	    if($aboutImags!="")
+	    $aboutImags=$aboutImags.",";
+	 	$oldCount= count($this->input->post('oldAboutUsImages'));
+	  
+		$data_count = count($_FILES['Aboutgalleryimage']['name']);
+	     //exit;
+	    for ($i=0; $i<$data_count; $i++)
+	    {
+		
+		$_FILES['userfile']['name']= $files['Aboutgalleryimage']['name'][$i];
+		$_FILES['userfile']['name']= $files['Aboutgalleryimage']['name'][$i];
+		$_FILES['userfile']['type']= $files['Aboutgalleryimage']['type'][$i];
+		$_FILES['userfile']['tmp_name']= $files['Aboutgalleryimage']['tmp_name'][$i];
+		$_FILES['userfile']['error']= $files['Aboutgalleryimage']['error'][$i];
+		$_FILES['userfile']['size']= $files['Aboutgalleryimage']['size'][$i];
+		
+		
+		$this->upload->initialize($this->set_upload_options());
+		$data=$this->upload->do_upload();
+		$aboutNewImags =$aboutNewImags .base_url()."upload/aboutUsGallery/".$_FILES['userfile']['name'].",";
+		
+		
+	    }
+	    
+	   // print_r($aboutNewImags);
+	  $totlaImage= $aboutImags.$aboutNewImags;
+	   //exit;
+		
+	//}
 	
 	if($_FILES["image"]["name"]!="")
 	{
-	    $url=$config['upload_path'] ='upload/aboutUs/';
-	    $config['allowed_types'] = 'gif|jpg|png';
-	    $this->load->library('upload', $config);
-	    $this->upload->do_upload('image');
-	    $data =  $this->upload->data();
-	    $filename=$data['file_name'];
+	    //$url=$config['upload_path'] ='upload/aboutUs/';
+	    //$config['allowed_types'] = 'gif|jpg|png';
+	    //$this->load->library('upload', $config);
+	    //$this->upload->do_upload('image');
+	    //$data =  $this->upload->data();
+	    //$filename=$data['file_name'];
+	    $url='upload/aboutUsGallery/';
+		$new_name = time()."_".$businessId."_".$_FILES["image"]['name'];
+		$url='upload/aboutUsGallery/'.$new_name;
+		file_put_contents(
+		    $url,
+		    base64_decode( 
+			str_replace('data:image/png;base64,', '', $this->input->post("aboutusImage"))
+		    )
+		);
+		$url=base_url().$url;
 	}
 	else
 	{
@@ -1224,11 +1403,12 @@ class branboxModel extends CI_Model {
 	    $data = array
 	    (
 	    'title'       =>$this->input->post('title'),
-	    'image'       =>$filename,
-	    'description' =>$this->input->post('description')
+	    'image'       =>$url,
+	    'description' =>$this->input->post('description'),
+	    'aboutGalleryImages'=>$totlaImage
 	    );
 	    $this->db->where('businessId', $businessId);
-	    $return= $this->db->update('about',$data);
+	  return   $return= $this->db->update('about',$data);
 	}
 	else
 	{
@@ -1236,31 +1416,31 @@ class branboxModel extends CI_Model {
 	    (
 		'businessId'=>$businessId,
 		'title'       =>$this->input->post('title'),
-		'image'       =>$filename,
-		'description' =>$this->input->post('description')
+		'image'       =>$url,
+		'description' =>$this->input->post('description'),
+		'aboutGalleryImages'=>$aboutImags
 	    );
-	    $return =$this->db->insert('about',$data);
+	 return   $return =$this->db->insert('about',$data);
 	   
 	}
     }
+
     
     function orderedItem()
     {
 	$businessId=$this->session->userdata('businessId');
 	//$sql="select  from itemorder itm join orderitemcount oitm on itm"
-	
-	$sql="select s.*,j.*  FROM orderItemCount s join enduser j ON s.businessId = j.businessId  and s.userId= j.id  where s.businessId = '$businessId' and s.timedDelivery='NO'";
+	$sql="select s.*,j.id,j.userName,j.email  FROM orderItemCount s join enduser j ON s.businessId = j.businessId  and s.userId= j.id  where s.businessId = '$businessId' and s.timedDelivery='YES'";
 	return $this->db->query($sql, $return_object = TRUE)->result_array();
 	
-	
-	$sql= "SELECT s.id,s.itemId,s.endUserId,s.quantity,s.totalPrice,s.currencyFormat,s.createdTime,s.status,s.timedDate, i.menuId,i.subMenuId,i.name,i.image,i.price,i.garnish,i.tax,i.offers, j.userName,j.address1,j.address2,j.city,j.state,j.country,j.postalCode,j.phoneNumber FROM itemorder s INNER JOIN submenuitem i ON i.id = s.itemId INNER JOIN enduser j ON s.endUserId= j.id where i.businessId=s.businessId and s.businessId='$businessId'";
-	return $this->db->query($sql, $return_object = TRUE)->result_array();
+	//$sql= "SELECT s.id,s.itemId,s.endUserId,s.quantity,s.totalPrice,s.currencyFormat,s.createdTime,s.status, i.menuId,i.subMenuId,i.name,i.image,i.price,i.garnish,i.tax,i.offers, j.userName,j.address1,j.address2,j.city,j.state,j.country,j.postalCode,j.phoneNumber FROM itemorder s INNER JOIN submenuitem i ON i.id = s.itemId INNER JOIN enduser j ON s.endUserId= j.id where i.businessId=s.businessId and s.businessId='$businessId'";
+	//return $this->db->query($sql, $return_object = TRUE)->result_array();
     }
     function itemorderDelete($id,$endUserId)
     {
 	$businessId=$this->session->userdata('businessId');
 	$this->db->where('businessId', $businessId); 
-	//$this->db->where('id', $id);
+	$this->db->where('id', $id);
 	$this->db->where('endUserId', $endUserId);
 	$this->db->delete('itemorder');
     }
@@ -1269,7 +1449,7 @@ class branboxModel extends CI_Model {
     {
 	$businessId=$this->session->userdata('businessId');
 	//$sql= "SELECT s.*,i.* FROM booktable s INNER JOIN tablelist i ON i.tableId = s.id and i.businessId=s.businessId";
-	$sql= "SELECT s.id,s.endUserId,s.NoOfPerson,s.bookingDateTime,s.createdTime,s.status, j.userName,j.address1,j.address2,j.city,j.state,j.country,j.postalCode,j.phoneNumber FROM booktable s  INNER JOIN enduser j ON s.businessId=j.businessId and s.endUserId= j.id where j.businessId='$businessId' ";
+	$sql= "SELECT s.id,s.endUserId,s.NoOfPerson,s.bookingDate,s.bookingTime,s.createdTime,s.status, j.userName,j.address1,j.address2,j.city,j.state,j.country,j.postalCode,j.phoneNumber FROM booktable s  INNER JOIN enduser j ON s.businessId=j.businessId and s.endUserId= j.id where j.businessId='$businessId' ";
 	return $this->db->query($sql, $return_object = TRUE)->result_array();
     }
     function tableRequestDelete($id,$endUserId)
@@ -1288,7 +1468,7 @@ class branboxModel extends CI_Model {
     {
 	if($_FILES['image1']['name']=="")
 	{
-	    $path1=$this->input->post('oldImage1');
+	    $arrayData=$this->input->post('oldImage1');
 	} 
 	else
 	{
@@ -1297,11 +1477,14 @@ class branboxModel extends CI_Model {
 	    $this->load->library('upload', $config);
 	    $this->upload->do_upload('image1');
 	    $path =  $this->upload->data();
-	    $path1=$path['file_name'];
+	    $path1=base_url(). $url.$path['file_name'];
+	    $type = pathinfo($path1, PATHINFO_EXTENSION);
+	    $data = file_get_contents($path1);
+	    $arrayData= 'data:image/' . $type . ';base64,' . base64_encode($data);
 	}
 	if($_FILES['image']['name']=="")
 	{
-	    $path11=$this->input->post('oldImage');
+	    $arrayData1=$this->input->post('oldImage');
 	} 
 	else
 	{
@@ -1310,7 +1493,10 @@ class branboxModel extends CI_Model {
 	    $this->load->library('upload', $config);
 	    $this->upload->do_upload('image');
 	    $path =  $this->upload->data();
-	    $path11=$path['file_name'];
+	    $path11=base_url(). $url.$path['file_name'];
+	    $type = pathinfo($path11, PATHINFO_EXTENSION);
+	    $data = file_get_contents($path11);
+	    $arrayData1= 'data:image/' . $type . ';base64,' . base64_encode($data);
 	}
 	$businessId=$this->session->userdata('businessId');
 	$user=$this->session->userdata('newUser');
@@ -1320,16 +1506,9 @@ class branboxModel extends CI_Model {
 	    
 	    $data=array(  
 		'currencyFormat'   =>  $this->input->post('currencyFormat'),
-		'color'    =>  $this->input->post('color'),
-		'favIcon'    =>  $path11,
-		'bannerImage'   =>  $path1,
-		'fontColor'   =>  $this->input->post('fontColor'),
-		'fontHoverColor'   =>  $this->input->post('fontHoverColor'),
-		'headerColor'   =>  $this->input->post('headerColor'),
-		'headerIconHoverColor'  =>  $this->input->post('headerIcnHovercolor'),
-		'menuHoverColor'   =>  $this->input->post('MenuHovColor'),
-		'menuItemSelectorColor'  =>  $this->input->post('menuItemSelctcolor'),                   
-		'createdTime'   =>  $this->input->post('createdTime'),     
+		'favIcon'    =>  $arrayData1,
+		'bannerImage'   =>   $arrayData,
+		'headerColor'   =>  $this->input->post('color'),    
 	    );
 	    $this->db->where('businessId', $businessId);
 	    $this->db->update('settings',$data);
@@ -1342,8 +1521,8 @@ class branboxModel extends CI_Model {
 		'businessId'=>$businessId,
 		'currencyFormat'   =>  $this->input->post('currencyFormat'),
 		'color'    =>  $this->input->post('color'),
-		'favIcon'    =>  $path11,
-		'bannerImage'   =>  $path1,
+		'favIcon'    =>  $arrayData1,
+		'bannerImage'   =>  $arrayData,
 		'fontColor'   =>  $this->input->post('fontColor'),
 		'fontHoverColor'   =>  $this->input->post('fontHoverColor'),
 		'headerColor'   =>  $this->input->post('headerColor'),
@@ -1373,16 +1552,26 @@ class branboxModel extends CI_Model {
     //Laxmi priya
     function imageListAddNew()
     {
-	$url=$config['upload_path'] ='upload/gallery/';
-	$config['allowed_types'] = 'gif|jpg|png';
-	$this->load->library('upload', $config);
-	$this->upload->do_upload('image');
-	$path =  $this->upload->data();
-	$fileName=$path['file_name'];
-	$fileSize=$path['file_size'];
+	//$url=$config['upload_path'] ='upload/gallery/';
+	//$config['allowed_types'] = 'gif|jpg|png';
+	//$this->load->library('upload', $config);
+	//$this->upload->do_upload('image');
+	//$path =  $this->upload->data();
+	//$fileName=$path['file_name'];
+	//$fileSize=$path['file_size'];
 	$date = date("Y-m-d H:i:s");
-	$businessId=$this->session->userdata('businessId');
 	
+	$businessId=$this->session->userdata('businessId');
+	$count=$this->getSubMenuItem();
+	$url='upload/gallery/';
+	$new_name = time()."_".$businessId."_".$_FILES["image"]['name'];
+	$url='upload/gallery/'.$new_name;
+	file_put_contents(
+	    $url,
+	    base64_decode( 
+		str_replace('data:image/png;base64,', '', $this->input->post("galleryImage"))
+	    )
+	);
 	if($this->input->post('active')=="ON")
 	{
 	$ACTIVE='ON';
@@ -1393,11 +1582,11 @@ class branboxModel extends CI_Model {
 	}
 	$data=array(                   
 	    'businessId'  =>  $businessId,
-	    'name'   =>  $fileName,
-	    'link'   => base_url("upload/gallery/".$fileName) ,
+	    'name'   =>base_url().$url,
+	    'link'   => base_url("upload/gallery/".$url) ,
 	     'active'   =>  $ACTIVE,
-	     'size'=>$fileSize,
-	     'createdTime'  =>  $date,
+	     //'size'=>$fileSize,
+	     'createdTime'  =>  $date
 	);
 	//echo '<pre>';
 	//print_r($data);
@@ -1408,13 +1597,53 @@ class branboxModel extends CI_Model {
     public function record_count() {
         return $this->db->count_all("gallery");
     }
-    
+    public function video_count() {
+        return $this->db->count_all("videoGallery");
+    }
     public function getImageEdit($id)
     {
 	$businessId=$this->session->userdata('businessId');
 	$this->db->where('businessId', $businessId); 
 	$this->db->where('id', $id); 
 	return $this->db->get('gallery')->result_array();
+    }
+    public function getVideoEdit($id)
+    {
+	$businessId=$this->session->userdata('businessId');
+	$this->db->where('businessId', $businessId); 
+	$this->db->where('id', $id); 
+	return $this->db->get('videoGallery')->result_array();
+    }
+    function videoListAdd()
+    {
+	$businessId=$this->session->userdata('businessId');
+        $filename=$this->input->post('video');
+	if(is_uploaded_file($_FILES['video']['tmp_name'])) 
+        {
+            $filename = $_FILES['video']['name'];
+            $config['upload_path'] = 'upload/video/';
+            $config['allowed_types'] = 'mp4';
+            $config['max_size']='602400000';
+            $config['max_width']='1024';
+            $config['max_height']='768';
+	    $this->load->library('upload', $config);
+            $img = $this->upload->do_upload('video');
+        }
+	if($this->input->post('active')=="ON")
+	{
+	$ACTIVE='ON';
+	}
+	else
+	{
+	$ACTIVE='OFF';
+	}
+	$data=array(                   
+	    'businessId'  =>  $businessId,
+	    'videoName' => $filename,
+	    'videoUrl'   => base_url("upload/video/".$filename) ,
+	    'status' => $ACTIVE
+	);
+	$this->db->insert('videoGallery',$data);               
     }
     public function getImageList()
     {
@@ -1437,7 +1666,20 @@ class branboxModel extends CI_Model {
         }
         return false;
    }
-
+	public function fetch_Videodata($limit, $start) {
+	$businessId=$this->session->userdata('businessId');
+	$this->db->where('businessId', $businessId); 
+        $this->db->limit($limit, $start);
+        $query = $this->db->get("videoGallery");
+ 
+        if ($query->num_rows() > 0) {
+            foreach ($query->result_array() as $row) {
+                $data[] = $row;
+            }
+            return $data;
+        }
+        return false;
+   }
 //    function get_image()
 //    {
 //	
@@ -1464,7 +1706,13 @@ class branboxModel extends CI_Model {
 	$this->db->where('id', $code); 
 	$this->db->delete('gallery');
     }
-    
+     function deleteVideoListRow($code)
+    {
+	$businessId=$this->session->userdata('businessId');
+	$this->db->where('businessId', $businessId); 
+	$this->db->where('id', $code); 
+	$this->db->delete('videoGallery');
+    }
     
     // Admin USer Start
     
@@ -1514,8 +1762,259 @@ class branboxModel extends CI_Model {
     }
     //Admin User End
     
-   
+   //Feed Back
+   function feedback()
+   {
+	$sql= $this->db->get("feedBack");
+	return $sql->result_array();
     
+   }
+   function feedbackDelete($id)
+   {
+	$businessId=$this->session->userdata('businessId');
+	$this->db->where('id',$id);
+	$this->db->where('businessId',$businessId);
+	return $this->db->delete('feedBack');
+   }
+   function sendMessageToUser()
+    {
+	$businessId=$this->session->userdata('businessId');
+	$data = array
+	(
+	    'businessId'=>$businessId,
+	    'useremail'=>$this->input->post('userEmail'),
+	    'userId'=>$this->input->post('userId'),
+	     'feedBackId'=>$this->input->post('FeedBackID'),
+	    'sendMessage'=>$this->input->post('message')
+	);
+	return $this->db->insert('feedBackSendMesage',$data);
+    
+    }
+   //End User 
+   
+    function endUserView()
+    {	
+    	$businessId=$this->session->userdata('businessId');
+    	$this->db->where("businessId",$businessId);
+	$sql= $this->db->get("enduser");
+	return $sql->result_array();
+    }
+    function endUserAdd()
+    {
+	$businessId=$this->session->userdata('businessId');
+	$data = array
+	(
+	    'businessId'=>$businessId,
+	    'userName'=>$this->input->post('userName'),
+	    'address1'=>$this->input->post('address1'),
+	    'address2'=>$this->input->post('address2'),
+	    'city'=>$this->input->post('city'),
+	    'state'=>$this->input->post('state'),
+	    'country'=>$this->input->post('country'),
+	    'phoneNumber'=>$this->input->post('phoneNumber'),
+	    'dateOfBirth'=>$this->input->post('dateOfBirth'),
+	    'email'=>$this->input->post('email'),
+	    'status'=>"ON",
+	);
+	return $this->db->insert('enduser',$data);
+    }
+    
+    function endUserStatusUpdate($id)
+    {
+	$this->db->where("id",$id);
+	$sql= $this->db->get("enduser");
+	$return = $sql->result_array();
+	if($return[0]['status']=="ON")
+	   {
+		$status="OFF";
+	   }
+	   else
+	   {
+		$status="ON";
+	   }
+	$businessId=$this->session->userdata('businessId');
+	$sql="Update enduser set status='$status' where businessId='$businessId' and id='$id'";
+	$this->db->query($sql);
+	return $status;
+    }
+    function endUserEmailVerification($businessId,$id)
+    {
+	$this->db->where("id",$id);
+	$this->db->where("businessId",$businessId);
+	$sql= $this->db->get("enduser");
+	$return = $sql->result_array();
+	if($return[0]['verification']=="OFF")
+	{
+		 return 'OFF';
+	//exit;
+	    // return 0;
+	}
+	else
+	{
+	     $sql="Update enduser set status='ON', verification='OFF' where businessId='$businessId' and id='$id'";
+	     $this->db->query($sql);
+	     return 'ON';
+	}
+	
+    }
+    
+    function GetForgetPassword($businessId,$verificationCode,$id)
+    {
+    	$sql="select * from enduser  where  businessId='$businessId' and id='$id' and verificationcode='$verificationCode' ";
+    	$data=$this->db->query($sql)->result_array();
+    	return $data;
+    	
+    }
+
+    
+    function forgetPassword($businessId,$verificationCode,$id)
+    {
+    	$password=$_POST['forpass'];
+    	$sql="update enduser  set password='$password' ,verificationcode='' where  businessId='$businessId' and id='$id' and verificationcode='$verificationCode' ";
+    	$data1=$this->db->query($sql);
+    	$data['data']='data';
+    	$data['dd']='data';
+	return $data;	
+    }
+    
+    function queueSystem($time)
+    {
+
+	$businessId=$this->session->userdata('businessId');
+	$email=$_POST['userEmail'][0]; //$this->input->post("userEmail")
+	$this->db->where("email",$email);
+	$this->db->where("businessId",$businessId);
+	$sql= $this->db->get("enduser");
+	$return = $sql->result_array();
+	$userId=$return[0]['id'];
+	//print_r($return[0]['id']);
+	
+	$date=date('Y-m-d');
+	$sql3="select * from enduser where email='$email' and businessId='$businessId' and status='ON' ";
+	$userData=$this->db->query($sql3)->result_array();
+	$ddddd[]=$userData[0]['appId'];
+	$userName=$userData[0]['userName'];
+	//print_r($ddddd);
+	//exit;
+	
+	$sql1="DELETE FROM `queuetoken` WHERE  Date(today) >'$date'";
+	$token=$this->db->query($sql1);
+	
+	$sql2="select max(tokenNo) from queuetoken where Date(today) = '$date'";
+	$token=$this->db->query($sql2)->result_array();
+	$tokenNo=$token[0]['max(tokenNo)']+1;
+	
+	if(count($userData)==1)
+	{
+	    $sql="insert into queuetoken(businessId,userId,userName,userMail,time,tokenNo,today,status,arrived)values('$businessId','$userId','$userName','$email','$time','$tokenNo','$date','OFF','OFF')";
+	    $this->db->query($sql);
+	
+	    $checkSend='N';
+	    $datas=$ddddd;
+	    $message="Your Table Token No: ".$tokenNo;
+	    $this->sendNotification($checkSend,$datas,$message);
+	
+	    return true;
+	}
+	
+	
+    }
+    function getNotification(){
+    	$businessId=$this->session->userdata('businessId');
+    	$this->db->where("businessId",$businessId);
+    	$this->db->where("status","ON");
+    	$sql= $this->db->get("enduser");
+	return $sql->result_array();
+    }
+    function sendNotification($checkSend,$datas,$message){
+	$apiKey = 'AIzaSyDaV7S_kOiMDHNCsw68jQ0PYwgTQyX-ZdU';
+	$gcmUrl = 'https://android.googleapis.com/gcm/send';
+	$regid = array();
+	$checkSend = $checkSend;
+	if($checkSend == 'Y'){
+	    $businessId=$this->session->userdata('businessId');
+    	    $this->db->where("businessId",$businessId);
+    	    $this->db->where("status","ON");
+	    $sql = $this->db->get("enduser");
+	    $result = $sql->result_array();
+	    foreach($result as $row){
+		array_push($regid, $row['appId']);
+	    }
+	}else{
+	    $userSelect = $datas;
+	    for($i=0; $i<count($userSelect); $i++){
+		array_push($regid, $userSelect[$i]);
+		
+		
+	    }
+	    
+	    
+	}
+	$message =$message;
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, $gcmUrl);
+	curl_setopt($ch, CURLOPT_POST, true);
+	curl_setopt($ch, CURLOPT_HTTPHEADER,
+	    array(
+		'Authorization: key=' . $apiKey,
+		'Content-Type: application/json'
+	    )
+	);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(
+		array(
+		    'registration_ids' => $regid,
+		    'data' => array(
+		    'message' => $message
+		    )
+		),
+		JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
+	    )
+	);
+	 
+	$result = curl_exec($ch);
+	if ($result === false) {
+	    throw new \Exception(curl_error($ch));
+	}
+	 
+	curl_close($ch);
+	return $result;
+    }
+    function getQueueTicketUsers()
+    {
+	$sql2="select * from queuetoken";
+	return $token=$this->db->query($sql2)->result_array();
+    }
+    function sendQueueTicketNotification()
+    {
+    	$businessId=$this->session->userdata('businessId');
+	echo $userEmail=$_POST['userEmail'];
+	echo $userId=$_POST['userId'];
+	echo $message=$_POST['message'];
+	$sql3="select * from enduser where email='$userEmail' and businessId='$businessId' and status='ON' and id='$userId' ";
+	$userData=$this->db->query($sql3)->result_array();
+	$ddddd[]=$userData[0]['appId'];
+	$checkSend='N';
+	$datas=$ddddd;
+	//$message="Your Table Is ready Please Come";
+	$this->sendNotification($checkSend,$datas,$message);
+	return true;
+    
+    }
+    function ticketDelete($id)
+    {
+	$businessId=$this->session->userdata('businessId');
+	$this->db->where('id',$id);
+	$this->db->where('businessId',$businessId);
+	return $this->db->delete('queuetoken');
+    }
+    function weitingStatus($id,$businessId)
+    {
+	$this->db->where('id',$id);
+	$this->db->where('businessId',$businessId);
+	return $this->db->get('queuetoken')->result_array();
+    }
 }
 
 		

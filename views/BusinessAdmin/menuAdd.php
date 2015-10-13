@@ -1,9 +1,25 @@
-
 <!--Author: gobi.C
 Created on: 04/03/15
 Modified on: 24/03/15
 -->
-
+<style>
+        .container
+        {
+            position: absolute;
+            top: 10%; left: 10%; right: 0; bottom: 0;
+        }
+        .action
+        {
+            width: 700px;
+            height: 30px;
+            margin: 10px 0;
+        }
+        .cropped>img
+        {
+            margin-right: 10px;
+	    padding-bottom: 10px;
+        }
+    </style>
 <div id="content" class="content">
     <!-- begin breadcrumb -->
     <ol class="breadcrumb pull-right">
@@ -41,7 +57,7 @@ Modified on: 24/03/15
 				    <input type="text" name="name" id="name" value=""  class="form-control" placeholder="Menu Name" />
 				</div>
 			    </div>
-			    <div class="form-group">
+			 <!-- <div class="form-group">
 				<label class="col-md-3 control-label">Menu Image</label>
 				<div class="col-md-5">
 				    
@@ -58,7 +74,27 @@ Modified on: 24/03/15
 				    </div>
 				    
 				</div>
+			    </div>-->
+			    
+			<div class="">
+			   <!--<label class="">Menu Image</label>-->
+			    <div class="imageBox">
+				
+				<div class="thumbBox"><h3><center>Please select the image</center></h3></div>
+				<div class="spinner" style="display: none"></div>
 			    </div>
+			    <div class="action">
+				
+				<input type="file" class="file" name="image" style="float:left; width: 250px">
+				<input class="btn btn-primary" type="button" id="btnCrop" value="Crop" style="float: right">
+				
+			    </div>
+			    <div class="cropped">
+				<img src="" class="imageId"  alt="" >
+				    <input type="hidden" value="" name="menuImage" id="menuImage">
+			    </div>
+			</div>
+			    
 			<!--    <div class="form-group">-->
 			<!--	<label class="col-md-3 control-label">Menu Position</label>-->
 			<!--	<div class="col-md-5">-->
@@ -131,9 +167,12 @@ $(document).ready(function() {
             },
 	    image: {
                 validators: {
+		
+		    
                     notEmpty: {
                         message: 'It is required and can\'t be empty'
                     },
+		    
                 }
             },
 	    position: {
@@ -207,8 +246,38 @@ function form_reset() {
 
     });
 	
-    </script>
 	
+    </script>
+	<script type="text/javascript">
+    YUI().use('node', 'crop-box', function(Y){
+        var options =
+        {
+            imageBox: '.imageBox',
+            thumbBox: '.thumbBox',
+            spinner: '.spinner',
+            imgSrc: 'avatar.png'
+        }
+        var cropper = new Y.cropbox(options);
+        Y.one('.file').on('change', function(){
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                options.imgSrc = e.target.result;
+                cropper = new Y.cropbox(options);
+            }
+            reader.readAsDataURL(this.get('files')._nodes[0]);
+            this.get('files')._nodes = [];
+        })
+        Y.one('#btnCrop').on('click', function(){
+            var img = cropper.getDataURL();
+	    menuImage
+	    $(".imageId").attr("src",img);
+	    $("#menuImage").val(img);
+	    
+            Y.one('.imageId').attr("src",img);
+        })
+      
+    })
+</script>
 	
 </body>
 

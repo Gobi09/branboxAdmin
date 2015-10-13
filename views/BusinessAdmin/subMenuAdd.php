@@ -3,7 +3,24 @@
 Created on: 04/03/15
 Modified on: 24/03/15
 -->
-
+<style>
+        .container
+        {
+          
+            top: 0%; left: 0%; right: 0; bottom: 0;
+        }
+        .action
+        {
+            width: 400px;
+            height: 300px;
+            margin: 10px 0;
+        }
+        .cropped>img
+        {
+            margin-right: 10px;
+	    padding-bottom: 10px;
+        }
+    </style>
 <div id="content" class="content">
     <!-- begin breadcrumb -->
     <ol class="breadcrumb pull-right">
@@ -52,23 +69,24 @@ Modified on: 24/03/15
 				    <input type="text" name="name" id="name"  class="form-control" placeholder="Menu Name" />
 				</div>
 			    </div>
-			    <div class="form-group">
-				<label class="col-md-4 control-label">Sub Menu Image</label>
-				<div class="col-md-5">
-				    <img class="media-object superbox-img previewimage" id="show_image11" name="show_image" src="<?php echo base_url("assets/img/user-15.jpg");?>">
-				     <input id="filestyle-11" class="filestyle" type="file" name='image' onchange="PreviewImage();" data-buttonbefore="true" style="position: absolute; clip: rect(0px, 0px, 0px, 0px);" tabindex="-1">
-				    <div class="bootstrap-filestyle input-group">
-					<span class="group-span-filestyle input-group-btn" tabindex="0">
-					    <label id="new" class="btn btn-default" for="filestyle-11">
-						<span class="glyphicon glyphicon-folder-open"></span>
-						Choose file
-					    </label>
-					</span>
-					<input class="form-control" id="filestyle-21" value="" type="text" readonly>
-				    </div>
-				    
-				</div>
+			   <div class="">
+			   <!--<label class="">Menu Image</label>-->
+			    <div class="imageBox">
+				
+				<div class="thumbBox"><h3><center>Please select the image</center></h3></div>
+				<div class="spinner" style="display: none"></div>
 			    </div>
+			    <div class="action">
+				
+				<input type="file" class="file" name="image" style="float:left; width: 250px">
+				<input class="btn btn-primary" type="button" id="btnCrop" value="Crop" style="float: right">
+				
+			    </div>
+			    <div class="cropped">
+				<img src="" class="imageId"  alt="" >
+				    <input type="hidden" value="" name="subMenuImage" id="subMenuImage">
+			    </div>
+			</div>
 			<!--    <div class="form-group">-->
 			<!--	<label class="col-md-4 control-label">Sub Menu Position</label>-->
 			<!--	<div class="col-md-5">-->
@@ -192,7 +210,13 @@ function form_reset() {
           };
     };
     
-
+function changeImage()
+{
+     $("#show_image11").addClass("hide");
+    
+    $("#changeImage").removeClass("hide");
+    
+}
 </script>
 <script type="text/javascript">
     $(document).ready(function(){
@@ -215,7 +239,36 @@ function form_reset() {
 
     });
     </script>
-	
+<script type="text/javascript">
+    YUI().use('node', 'crop-box', function(Y){
+        var options =
+        {
+            imageBox: '.imageBox',
+            thumbBox: '.thumbBox',
+            spinner: '.spinner',
+            imgSrc: 'avatar.png'
+        }
+        var cropper = new Y.cropbox(options);
+        Y.one('.file').on('change', function(){
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                options.imgSrc = e.target.result;
+                cropper = new Y.cropbox(options);
+            }
+            reader.readAsDataURL(this.get('files')._nodes[0]);
+            this.get('files')._nodes = [];
+        })
+        Y.one('#btnCrop').on('click', function(){
+            var img = cropper.getDataURL();
+	    subMenuImage
+	    $(".imageId").attr("src",img);
+	    $("#subMenuImage").val(img);
+	    
+            Y.one('.imageId').attr("src",img);
+        })
+      
+    })
+</script>	
 	
 </body>
 

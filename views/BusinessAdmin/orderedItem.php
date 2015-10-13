@@ -27,7 +27,6 @@
 					    <th>User Name</th>
 					    <th>Email</th>
 					    <th>quantity</th>
-					    <th>Order Type</th>
 					    <th>Status</th>
 					    <th>Action</th>
 					</tr>
@@ -42,26 +41,20 @@
 					    </td>
 					    <td>
 						<?php if($row['status']=='ordered') { if($row['timedDelivery']=="NO"){$timedDate='o';}else{$timedDate='t';} ?>
-						<a href="<?php echo base_url("branboxController/orderAcceptance/".$row['endUserId']."/".$timedDate)?>"><?php echo $row['email']?></a>
-						<?php } else  echo $row['email']; ?>
-					    </td>
-					    
-					     <td>
-						<?php if($row['status']=='ordered' && $row['timedDelivery']=="NO" ) { if($row['timedDate']=="o"){$timedDate='o';}else{$timedDate='t';} ?>
-						<a href="<?php echo base_url("branboxController/orderAcceptance/".$row['endUserId']."/".$timedDate)?>"><?php echo $row['email']?></a>
+						<a href="<?php echo base_url("branboxController/orderAcceptance/".$row['userId']."/".$timedDate)?>"><?php echo $row['email']?></a>
 						<?php } else  echo $row['email']; ?>
 					    </td>
 					    
 					    <td>
 						<?php if($row['status']=='ordered') { if($row['timedDelivery']=="NO"){$timedDate='o';}else{$timedDate='t';} ?>
-						<a href="<?php echo base_url("branboxController/orderAcceptance/".$row['endUserId']."/".$timedDate)?>"><?php echo $row['count']?></a>
+						<a href="<?php echo base_url("branboxController/orderAcceptance/".$row['userId']."/".$timedDate)?>"><?php echo $row['count']?></a>
 						<?php } else  echo $row['count']; ?>
 					    </td>
 					    
 					    <td>
-						<?php if($row['status']=='ordered') { if($row['timedDelivery']=="NO"){$timedDate='o';}else{$timedDate='t';} ?>
-						<a href="<?php echo base_url("branboxController/orderAcceptance/".$row['endUserId']."/".$timedDate)?>"><?php echo $row['status']?></a>
-						<?php } else  echo $row['status']; ?>
+						<?php if($row['status']=='ordered') { if($row['timedDelivery']=="NO"){$timedDate='o'; $orderStatus="Pending Orders";} else{$timedDate='t';} ?>
+						<a href="<?php echo base_url("branboxController/orderAcceptance/".$row['userId']."/".$timedDate)?>"><?php echo $orderStatus;?></a>
+						<?php } else  echo "Completed Orders"; ?>
 					    </td>
 					     <td>
 						
