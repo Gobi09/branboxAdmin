@@ -1761,7 +1761,27 @@ class branboxModel extends CI_Model {
 	$this->db->delete('adminuser'); 
     }
     //Admin User End
-    
+    //bharani guru changes
+    function getUserDetail($userId){
+	$sql="select *  FROM enduser where id = '$userId'";
+	$result = $this->db->query($sql, $return_object = TRUE)->result_array();
+	return $result[0];
+    }
+    function updateUserDetail($request){
+	$data = array(
+	    'userName'=>$request->userName,
+	    'dateOfBirth'=>$request->dateOfBirth,
+	    'email'=>$request->email,
+	    'phoneNumber'=>$request->phoneNumber
+	);
+	$this->db->where('id',$request->userId);
+	$this->db->update('enduser',$data);
+	
+	$userId = $request->userId;
+	$sql="select *  FROM enduser where id = '$userId'";
+	$result = $this->db->query($sql, $return_object = TRUE)->result_array();
+	return $result[0];
+    }
    //Feed Back
    function feedback()
    {

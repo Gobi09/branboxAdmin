@@ -48,10 +48,10 @@
 $active_group = 'default';
 $active_record = TRUE;
     
-$db['default']['hostname'] = 'localhost';
-$db['default']['username'] = 'root';
-$db['default']['password'] = '';
-$db['default']['database'] = 'branbox';
+$db['default']['hostname'] = 'box741.bluehost.com';
+$db['default']['username'] = 'gowrigro';
+$db['default']['password'] = 'Gpro@!23';
+$db['default']['database'] = 'gowrigro_branboxnew';
 $db['default']['dbdriver'] = 'mysql';
 $db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = TRUE;

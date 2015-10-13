@@ -621,7 +621,6 @@ class CI_DB_mysqli_driver extends CI_DB {
 		$sql .= ($where != '' AND count($where) >=1) ? " WHERE ".implode(" ", $where) : '';
 
 		$sql .= $orderby.$limit;
-
 		return $sql;
 	}
 

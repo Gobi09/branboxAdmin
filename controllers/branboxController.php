@@ -1242,6 +1242,24 @@ class branboxController extends CI_Controller {
 	$viewResult['result']=$this->branboxModel->deleteImageListRow($code);
 	redirect(base_url("branboxController/galleryAdd"));
     }
+    function getUserDetail(){
+	header('Access-Control-Allow-Origin:*');
+	header('Content-Type: application/JSON');
+	header("Access-Control-Allow-Methods: GET, POST");
+	header("Access-Control-Allow-Headers: Content-Type, Content-Length, Accept-Encoding");
+	$postdata = file_get_contents("php://input");
+	$request = json_decode($postdata);
+	echo json_encode($this->branboxModel->getUserDetail($request->userId));
+    }
+    function updateUserDetail(){
+	header('Access-Control-Allow-Origin:*');
+	header('Content-Type: application/JSON');
+	header("Access-Control-Allow-Methods: GET, POST");
+	header("Access-Control-Allow-Headers: Content-Type, Content-Length, Accept-Encoding");
+	$postdata = file_get_contents("php://input");
+	$request = json_decode($postdata);
+	echo json_encode($this->branboxModel->updateUserDetail($request));
+    }
     function videoDelete($code)
     {
 	$viewResult['result']=$this->branboxModel->deleteVideoListRow($code);
