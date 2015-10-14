@@ -1772,7 +1772,11 @@ class branboxModel extends CI_Model {
 	    'userName'=>$request->userName,
 	    'dateOfBirth'=>$request->dateOfBirth,
 	    'email'=>$request->email,
-	    'phoneNumber'=>$request->phoneNumber
+	    'phoneNumber'=>$request->phoneNumber,
+	    'address1'=>$request->address1,
+	    'address2'=>$request->address2,
+	    'city'=>$request->city,
+	    'state'=>$request->state
 	);
 	$this->db->where('id',$request->userId);
 	$this->db->update('enduser',$data);
