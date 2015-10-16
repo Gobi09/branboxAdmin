@@ -600,11 +600,30 @@ class branboxModel extends CI_Model {
 	
     }
     // menu end
+    //take order start
+    function getItemtakeOrder()
+    {
+	$sql="SELECT * FROM submenuitem where status='ON' AND status='ON' ORDER BY name";
+        return $query = $this->db->query($sql)->result_array();
+    }
+    function getIngredientsItem($id)
+    {
+	$sql="SELECT * FROM ingredients where itemId='$id'";
+        return $query = $this->db->query($sql)->result_array();
+    }
+    function getcartData($userId)
+    {
+	return $result = $this->db->query("SELECT * FROM cartTemp WHERE totalPrice > '0' AND userId='$userId' GROUP BY orderNo")->result_array();
     
-    
+    }
+    function removeFromCart($orderNo,$userId)
+    {
+	
+	$sql="DELETE FROM cartTemp WHERE userId='$userId' AND orderNo='$orderNo'";
+        return $query = $this->db->query($sql);
+    }
+    //end take order
     //sub menu start
-    
-    
     public function getSubMenu()
     {
 	$businessId=$this->session->userdata('businessId');

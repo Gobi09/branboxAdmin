@@ -21,7 +21,8 @@ class branboxController extends CI_Controller {
 	    );
 	$this->load->library('email', $config);
 	$this->load->helper('string');
-	
+	$this->load->library('cart');
+	$this->load->helper('string');
     }
     //Authentication Controllers Begin
     public function index(){
@@ -1287,7 +1288,156 @@ class branboxController extends CI_Controller {
 	else
 	    echo 0;
     }
-    
+    //take order
+    function takeOrderForCustomer($cusId)
+    {
+	$result['userId'] = $cusId;
+	$result['takeOrder'] = $this->branboxModel->getItemtakeOrder();
+	$result['cartData'] = $this->branboxModel->getcartData($cusId);
+	$submenuArry = array();	
+	foreach($result['cartData'] as $itemid){
+	    $submenuId = $itemid['itemId'];
+	    $subMenuData = $this->db->query("SELECT * FROM submenuitem WHERE id='$submenuId'")->result_array();
+	    array_push($submenuArry, $subMenuData[0]);
+	}
+	$result['productName'] = $submenuArry;
+	$this -> load -> view('header');
+	$this -> load -> view('BusinessAdmin/takeOrderForCustomer',$result);
+    }
+    function deleteFromCart()
+    {
+	$subMenuData = array();
+	$submenuArry = array();
+	$orderNo = $_POST['orderNo'];
+	$userId = $_POST['userId'];
+	$result = $this->branboxModel->removeFromCart($orderNo,$userId);
+	if($result){
+	    $userArry = $this->db->query("SELECT * FROM cartTemp WHERE totalPrice > '0' AND userId='$userId' GROUP BY orderNo")->result_array();
+	    foreach($userArry as $itemid){
+		$submenuId = $itemid['itemId'];
+		$subMenuData = $this->db->query("SELECT * FROM submenuitem WHERE id='$submenuId'")->result_array();
+		array_push($submenuArry, $subMenuData[0]);
+	    }
+	    if(count($userArry) > 0){
+		print json_encode(array('cart'=>$userArry,'submenu'=>$submenuArry));
+	    }else{
+		print json_encode(array('cart'=>'0'));
+	    }
+	}
+    }
+    function addToCart()
+    {
+	$ingredientName = array();
+	$addonPrice = array();
+	$ingredients = array();
+	$addonNY = array();
+	$addonPrice = array();
+	$Ingid = array();
+	$subMenuData = array();
+	$submenuArry = array();
+	$date = date("Y/m/d-H:i");
+	$businessId = $_POST['businessId'];
+	$menuId = $_POST['menuId'];
+	$subMenuId = $_POST['subMenuId'];
+	$itemId = $_POST['itemId'];
+	$userId = $_POST['userId'];
+	$actualPrice = $_POST['actualPrice'];
+	$quantity = $_POST['quantity'];
+	$serilizeData = $_POST['serializeData'];
+	$cartId = $_POST['cartId'];
+	$serilizeCount = count($serilizeData);
+	$TotalPrice = $quantity * $actualPrice;
+	for($i=0;$i<$serilizeCount;$i++){
+	    if($serilizeData[$i]['name'] == 'Ingid'){ 
+		array_push($Ingid,$serilizeData[$i]['value']);
+	    }
+	}
+	for($i=0;$i<$serilizeCount;$i++){
+	    if($serilizeData[$i]['name'] == 'ingredientName'){ 
+		array_push($ingredientName,$serilizeData[$i]['value']);
+	    }
+	}
+	for($i=0;$i<$serilizeCount;$i++){
+	    if($serilizeData[$i]['name'] == 'ingredients'){ 
+		array_push($ingredients,$serilizeData[$i]['value']);
+	    }
+	}
+	for($i=0;$i<$serilizeCount;$i++){
+	    if($serilizeData[$i]['name'] == 'addonPrice'){ 
+		array_push($addonPrice,$serilizeData[$i]['value']);
+	    }
+	}
+	for($i=0;$i<$serilizeCount;$i++){
+	    if($serilizeData[$i]['name'] == 'addonNY'){ 
+		array_push($addonNY,$serilizeData[$i]['value']);
+	    }
+	}
+	foreach($addonNY as $key=>$value){
+	    if($value == 'YES'){
+		$TotalPrice = $TotalPrice + $addonPrice[$key] * $quantity;
+		$addon = $addonPrice[$key];
+	    }
+	}
+	$orderNo = random_string('alnum', 4);
+	if($quantity > 0){ 
+	    for($i=0; $i < count($Ingid); $i++){
+		$data=array(
+		    "businessId"=>$businessId,
+		    "menuId"=>$menuId,
+		    "submenuId"=>$subMenuId,
+		    "itemId"=>$itemId,
+		    "userId"=>$userId,
+		    "ingId"=>$Ingid[$i],
+		    "cartId"=>$cartId,
+		    "orderNo"=>$orderNo,
+		    "ingNotes"=>$ingredients[$i],
+		    "quantity"=>$quantity,
+		    "actualPrice"=>$actualPrice,
+		    "totalPrice"=>$TotalPrice,
+		    "addonPrice"=>$addonPrice[$i],
+		    "currencyFormat"=>'AED',
+		    "status"=>'order'
+		);
+		$this->db->insert("cartTemp",$data);
+		//print "<pre>";
+		//print_r($data);
+		//print "</pre>";
+	    }
+	    //exit;
+	}
+	if(count($Ingid) == '0'){
+	    $data=array(
+		"businessId"=>$businessId,
+		"menuId"=>$menuId,
+		"submenuId"=>$subMenuId,
+		"itemId"=>$itemId,
+		"userId"=>$userId,
+		"ingId"=>null,
+		"cartId"=>$cartId,
+		"orderNo"=>$orderNo,
+		"ingNotes"=>null,
+		"quantity"=>$quantity,
+		"actualPrice"=>$actualPrice,
+		"totalPrice"=>$TotalPrice,
+		"addonPrice"=>null,
+		"currencyFormat"=>'AED',
+		"status"=>'order'
+	    );
+	    $this->db->insert("cartTemp",$data);
+	    }
+	$userArry = $this->db->query("SELECT * FROM cartTemp WHERE totalPrice > '0' AND userId='$userId' GROUP BY orderNo")->result_array();
+	foreach($userArry as $itemid){
+	    $submenuId = $itemid['itemId'];
+	    $subMenuData = $this->db->query("SELECT * FROM submenuitem WHERE id='$submenuId'")->result_array();
+	    array_push($submenuArry, $subMenuData[0]);
+	}
+	if(count($userArry) > 0){
+	    print json_encode(array('cart'=>$userArry,'submenu'=>$submenuArry));
+	}else{
+	    print json_encode(array('cart'=>'0'));
+	}
+    }
+    //end order
     //End User
      function endUserView()
     {
@@ -1295,8 +1445,6 @@ class branboxController extends CI_Controller {
 	$this -> load -> view('header');
 	$this -> load -> view('BusinessAdmin/endUserView',$result);
     }
-    
-    
     function endUserAdd()
     {
 	if($this->input->post("proceed") )
@@ -1306,17 +1454,6 @@ class branboxController extends CI_Controller {
 	}
 	$this -> load -> view('header');
 	$this -> load -> view('BusinessAdmin/enduserAdd');
-    }
-    
-    function takeOrderForCustomer($cusId)
-    {
-	if($this->input->post("proceed") )
-	{
-	    $result=$this->branboxModel->endUserAdd();
-	    redirect(base_url('branboxController/takeOrderForCustomer'));
-	}
-	$this -> load -> view('header');
-	$this -> load -> view('BusinessAdmin/takeOrderForCustomer');
     }
     function endUserStatusUpdate()
     {
