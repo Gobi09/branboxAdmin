@@ -622,6 +622,11 @@ class branboxModel extends CI_Model {
 	$sql="DELETE FROM cartTemp WHERE userId='$userId' AND orderNo='$orderNo'";
         return $query = $this->db->query($sql);
     }
+    function cartOderCancel($userId)
+    {
+	$sql="DELETE FROM cartTemp WHERE userId='$userId'";
+        return $query = $this->db->query($sql);
+    }
     //end take order
     //sub menu start
     public function getSubMenu()

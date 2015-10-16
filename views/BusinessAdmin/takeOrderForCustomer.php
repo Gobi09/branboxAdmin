@@ -41,8 +41,7 @@
 							    <?php break; } } ?>
 							    <td><?php echo $data['quantity']?></td>
 							    <td><?php echo $data['actualPrice']?></td>
-							    <td><?php echo  $data['actualPrice'] * $data['quantity'];
-								$total = $total + $data['totalPrice']; ?></td>
+							    <td><?php echo  $data['totalPrice']; ?></td>
 							    <td><button class="btn btn-xs btn-danger" onclick="cartDeleteItem('<?php echo $data['userId']?>','<?php echo $data['orderNo']?>')"><i class="fa fa-trash-o"></i></button></td>
 							</tr>
 							<?php } }else{ ?>
@@ -50,7 +49,8 @@
 							<?php }?>
 							<tr>
 							    <td colspan='3' align="right">Total : </td>
-							    <td><?php echo $total;?></td>
+							    <td><?php foreach($cartData as $data) { $total = $total + $data['totalPrice']; }
+							    echo $total; ?></td>
 							</tr>
 						    </tbody>
 					    </table>
@@ -59,10 +59,10 @@
 				</div>
 				<div class="row m-t-10">
 				    <div class="col-md-6">
-					<button  class="btn btn-inverse btn-block btn-sm" type="button" name="viewCart" id="viewCart" onclick="showHide('viewCartM');" ><i class="fa fa-shopping-cart m-r-3"></i>View Cart</button>
+					<a class="btn btn-inverse btn-block btn-sm" type="button" name="viewCart" id="viewCart" href="<?php echo site_url('branboxController/viewCart/'.$userId);?>"><i class="fa fa-shopping-cart m-r-3"></i>View Cart</a>
 				    </div>
 				    <div class="col-md-6">
-					<button  class="btn btn-inverse btn-block btn-sm" type="button" name="sideCheckout" id="sideCheckout" onclick="showHide('checkOut');"><i class="fa fa-check m-r-3"></i>Check Out</button>
+					<button  class="btn btn-inverse btn-block btn-sm" type="button" name="sideCheckout" id="sideCheckout" onclick="cartRemoveAll('<?php echo $userId;?>');"><i class="fa fa-times"></i> Cancel Oder</button>
 				    </div>
 				</div>
 			    </div>
@@ -210,7 +210,6 @@ function addToCart(id,$this) {
 	url:'<?php echo site_url('branboxController/addToCart'); ?>',
 	data: {businessId:businessId,menuId:menuId,subMenuId:subMenuId,itemId:itemId,userId:userId,actualPrice:actualPrice,quantity:quantity,serializeData:serializeData,cartId:cartId},
 	success:function(json){
-	    //console.log(json.submenu.name);
 	$('tbody#cartBody').children("tr").remove();	
 	    if (json.cart != '0') {
 		$('#cartColor').css('color','red');
@@ -221,7 +220,7 @@ function addToCart(id,$this) {
 		    //for(var j=0;j<json.submenu.length;j++){}
 		    $.each(json.submenu, function(key, value){
 			if (json.cart[i]['itemId'] == value.id) {
-			    cartTemp = cartTemp + '<td>'+value.name+'</td><td>'+json.cart[i]['quantity']+'</td><td>'+json.cart[i]['actualPrice']+'</td><td>'+json.cart[i]['actualPrice'] * json.cart[i]['quantity']+'</td><td><button class="btn btn-xs btn-danger" onclick="cartDeleteItem('+json.cart[i]['userId']+',\''+json.cart[i]['orderNo']+'\')"><i class="fa fa-trash-o"></i></button></td></tr>';
+			    cartTemp = cartTemp + '<td>'+value.name+'</td><td>'+json.cart[i]['quantity']+'</td><td>'+json.cart[i]['actualPrice']+'</td><td>'+json.cart[i]['totalPrice']+'</td><td><button class="btn btn-xs btn-danger" onclick="cartDeleteItem('+json.cart[i]['userId']+',\''+json.cart[i]['orderNo']+'\')"><i class="fa fa-trash-o"></i></button></td></tr>';
 			    return false;
 			}
 		    })
@@ -259,19 +258,32 @@ function cartDeleteItem(userId,orderNo){
 		    //for(var j=0;j<json.submenu.length;j++){}
 		    $.each(json.submenu, function(key, value){
 			if (json.cart[i]['itemId'] == value.id) {
-			    cartTemp = cartTemp + '<td>'+value.name+'</td><td>'+json.cart[i]['quantity']+'</td><td>'+json.cart[i]['actualPrice']+'</td><td>'+json.cart[i]['actualPrice'] * json.cart[i]['quantity']+'</td><td><button class="btn btn-xs btn-danger" onclick="cartDeleteItem('+json.cart[i]['userId']+',\''+json.cart[i]['orderNo']+'\')"><i class="fa fa-trash-o"></i></button></td></tr>';
+			    cartTemp = cartTemp + '<td>'+value.name+'</td><td>'+json.cart[i]['quantity']+'</td><td>'+json.cart[i]['actualPrice']+'</td><td>'+json.cart[i]['totalPrice']+'</td><td><button class="btn btn-xs btn-danger" onclick="cartDeleteItem('+json.cart[i]['userId']+',\''+json.cart[i]['orderNo']+'\')"><i class="fa fa-trash-o"></i></button></td></tr>';
 			    return false;
 			}
 		    })
 		}
 		cartTemp = cartTemp + '</tr>';
 		cartTemp = cartTemp + '<tr><td colspan="3" align="right">Total :</td><td>'+quantity+'</td</tr>';
-		console.log(cartTemp);
 		$('tbody#cartBody').append(cartTemp);
 		
 	    }else{
 		$('#cartBody').append('<tr>No item found..</tr>');
 	    }
+	}
+     });
+}
+function cartRemoveAll(userId){
+    var userId = userId;
+    $.ajax({ 
+	type:'POST',
+	async:false,
+	dataType: 'json',
+	url:'<?php echo site_url('branboxController/cartRemoveAll'); ?>',
+	data: {userId:userId},
+	success:function(json){
+	    $('tbody#cartBody').children("tr").remove();	
+	    $('#cartBody').append('<tr><td colspan="5">No item found..</td></tr>');
 	}
      });
 }

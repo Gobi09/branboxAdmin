@@ -1289,6 +1289,21 @@ class branboxController extends CI_Controller {
 	    echo 0;
     }
     //take order
+    function viewCart($userId)
+    {
+	$result['userId'] = $userId;
+	$result['takeOrder'] = $this->branboxModel->getItemtakeOrder();
+	$result['cartData'] = $this->branboxModel->getcartData($userId);
+	$submenuArry = array();	
+	foreach($result['cartData'] as $itemid){
+	    $submenuId = $itemid['itemId'];
+	    $subMenuData = $this->db->query("SELECT * FROM submenuitem WHERE id='$submenuId'")->result_array();
+	    array_push($submenuArry, $subMenuData[0]);
+	}
+	$result['productName'] = $submenuArry;
+	$this -> load -> view('header');
+	$this -> load -> view('BusinessAdmin/viewCart',$result);
+    }
     function takeOrderForCustomer($cusId)
     {
 	$result['userId'] = $cusId;
@@ -1335,6 +1350,8 @@ class branboxController extends CI_Controller {
 	$Ingid = array();
 	$subMenuData = array();
 	$submenuArry = array();
+	$addonIN = array();
+	$addon = 0;
 	$date = date("Y/m/d-H:i");
 	$businessId = $_POST['businessId'];
 	$menuId = $_POST['menuId'];
@@ -1374,10 +1391,13 @@ class branboxController extends CI_Controller {
 	}
 	foreach($addonNY as $key=>$value){
 	    if($value == 'YES'){
-		$TotalPrice = $TotalPrice + $addonPrice[$key] * $quantity;
-		$addon = $addonPrice[$key];
+		$addon = $addon + $addonPrice[$key];
+		array_push($addonIN,$addonPrice[$key]);
+	    }else{
+		array_push($addonIN,'0');
 	    }
 	}
+	$TotalPrice = $TotalPrice + $addon;
 	$orderNo = random_string('alnum', 4);
 	if($quantity > 0){ 
 	    for($i=0; $i < count($Ingid); $i++){
@@ -1394,16 +1414,12 @@ class branboxController extends CI_Controller {
 		    "quantity"=>$quantity,
 		    "actualPrice"=>$actualPrice,
 		    "totalPrice"=>$TotalPrice,
-		    "addonPrice"=>$addonPrice[$i],
+		    "addonPrice"=>$addonIN[$i],
 		    "currencyFormat"=>'AED',
 		    "status"=>'order'
 		);
 		$this->db->insert("cartTemp",$data);
-		//print "<pre>";
-		//print_r($data);
-		//print "</pre>";
 	    }
-	    //exit;
 	}
 	if(count($Ingid) == '0'){
 	    $data=array(
@@ -1435,6 +1451,19 @@ class branboxController extends CI_Controller {
 	    print json_encode(array('cart'=>$userArry,'submenu'=>$submenuArry));
 	}else{
 	    print json_encode(array('cart'=>'0'));
+	}
+    }
+    function cartOderCancel($userId)
+    {
+	$result = $this->branboxModel->cartOderCancel($userId);
+	redirect('branboxController/endUserView');
+    }
+    function cartRemoveAll()
+    {
+	$userId = $_POST['userId'];
+	$result = $this->branboxModel->cartOderCancel($userId);
+	if($result){
+	    echo '1';
 	}
     }
     //end order
