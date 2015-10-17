@@ -227,7 +227,6 @@ $table=$this->session->userdata('table');
 								    <thead>
 									<tr>
 									    <th>ingrediens</th>
-									    <th>Yes/No</th>
 									    <th>Notes</th>
 									</tr>
 								    </thead>
@@ -241,7 +240,6 @@ $table=$this->session->userdata('table');
 								    ?>    
 										<tr>
 										    <td><?php  echo $ingredient['ingredients']; ?></td>
-										    <td><?php  echo $ingredient['ingYN']; ?></td>
 										    <td><?php  echo $ingredient['ingNotes']; ?></td>
 										</tr>
 								    <?php

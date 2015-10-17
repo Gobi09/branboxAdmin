@@ -658,12 +658,6 @@ class branboxController extends CI_Controller {
 	$result['menuId']=$menuId;
 	$result['getSubMenu']=$this->branboxModel->getSubMenuEdit($menuId,$id);
 	$result['getMenu']=$this->branboxModel->getMenu();
-	
-	//echo "<pre>";
-	//print_r($result['menuId']);
-	//echo "</pre>";
-	//exit;
-	
 	$this -> load -> view('header');
 	$this -> load -> view('BusinessAdmin/subMenuEdit',$result);	
     }
@@ -1291,9 +1285,24 @@ class branboxController extends CI_Controller {
     //take order
     function viewCart($userId)
     {
+	
+	if(isset($_POST['save']))
+	{
+	    $actionButton = $_POST['save'];
+	    if($actionButton == 'update'){
+		$result = $this->branboxModel->orderUpdate($userId);
+	    }elseif($actionButton == 'orderSave'){
+		$approve = $this->branboxModel->orderApprove($userId);
+		if($approve)
+		{
+		    redirect('branboxController/endUserView');
+		}
+	    }
+	}
 	$result['userId'] = $userId;
 	$result['takeOrder'] = $this->branboxModel->getItemtakeOrder();
-	$result['cartData'] = $this->branboxModel->getcartData($userId);
+	$result['cartData'] = $this->branboxModel->getViewcartData($userId);
+	$result['tempCartData'] = $this->branboxModel->getAllcartData($userId);
 	$submenuArry = array();	
 	foreach($result['cartData'] as $itemid){
 	    $submenuId = $itemid['itemId'];
@@ -1398,7 +1407,8 @@ class branboxController extends CI_Controller {
 	    }
 	}
 	$TotalPrice = $TotalPrice + $addon;
-	$orderNo = random_string('alnum', 4);
+	$date = new DateTime();
+	$orderNo = $date->format('U');
 	if($quantity > 0){ 
 	    for($i=0; $i < count($Ingid); $i++){
 		$data=array(
@@ -1465,6 +1475,11 @@ class branboxController extends CI_Controller {
 	if($result){
 	    echo '1';
 	}
+    }
+    function cartDeletViewItem($userId,$orderNo)
+    {
+	$result = $this->branboxModel->removeFromCart($orderNo,$userId);
+	redirect('branboxController/viewCart/'.$userId);
     }
     //end order
     //End User

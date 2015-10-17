@@ -616,9 +616,123 @@ class branboxModel extends CI_Model {
 	return $result = $this->db->query("SELECT * FROM cartTemp WHERE totalPrice > '0' AND userId='$userId' GROUP BY orderNo")->result_array();
     
     }
+    function getViewcartData($userId)
+    {
+	return $result = $this->db->query("SELECT SUM(addonPrice) addon, id, businessId,menuId,submenuId,userId,itemId,ingId,cartId,orderNo,ingNotes,quantity,actualPrice,totalPrice,currencyFormat  FROM cartTemp WHERE totalPrice > '0' AND userId='$userId' GROUP BY orderNo")->result_array();
+	//SELECT * FROM cartTemp WHERE totalPrice > '0' AND userId='$userId' GROUP BY orderNo
+    
+    }
+    function getAllcartData($userId)
+    {
+	return $this->db->query("SELECT * FROM cartTemp WHERE userId='$userId'")->result_array();
+    }
+    function getItemName($ingId)
+    {
+	return $this->db->query("SELECT * FROM ingredients WHERE id='$ingId'")->result_array();
+    }
+    function orderUpdate($userId)
+    {
+	$count = count($_POST['ingredientName']);
+	$orderCount = count($_POST['quantity']);
+	$addon=0;
+	for($i=0;$i<$orderCount;$i++){
+	    $data=array(
+		"quantity"=>$_POST['quantity'][$i],
+	    );
+	    $this->db->where('orderNo',$_POST['orderNo'][$i]);
+	    $this->db->update("cartTemp",$data);
+	}
+	for($i=0;$i<$count;$i++){
+	    $data=array(
+		"ingNotes"=>$_POST['ingredientNote'][$i],
+		"addonPrice"=>$_POST['addonPrice'][$i],
+	    );
+	    $addon = $addon + $_POST['addonPrice'][$i];
+	    $this->db->where('id',$_POST['id'][$i]);
+	    $this->db->update("cartTemp",$data);
+	}
+	$fetch = $this->db->query("SELECT SUM(addonPrice) addon,quantity,actualPrice,orderNo FROM cartTemp WHERE userId='$userId' GROUP BY orderNo")->result_array();
+	$priceTotal = 0;
+	for($i=0;$i<$orderCount;$i++){
+	    if($_POST['orderNo'][$i] == $fetch[$i]['orderNo']){
+		$fetch[$i]['actualPrice'];
+		$priceTotal = $fetch[$i]['quantity'] * $fetch[$i]['actualPrice'] + $fetch[$i]['addon'];
+	    }
+	    $data=array(
+		"totalPrice"=>$priceTotal,
+	    );
+	    $this->db->where('orderNo',$_POST['orderNo'][$i]);
+	    $this->db->update("cartTemp",$data);
+	}
+	
+    }
+    function orderApprove($userId)
+    {
+	$arResult = $this->db->query("SELECT * FROM cartTemp WHERE userId='$userId'")->result_array();
+	$date = date("Y/m/d-H:i");
+	$datet = date("d/m/Y");
+	$time = date("h:i A.", time());
+	foreach($arResult as $splitArr) {
+	    $split_1 = array(
+		"businessId"=>$splitArr['businessId'],
+		"menuId"=>$splitArr['menuId'],
+		"subMenuId"=>$splitArr['submenuId'],
+		"itemId"=>$splitArr['itemId'],
+		"userId"=>$splitArr['userId'],
+		"itemStorageId"=>$splitArr['orderNo'],
+		"ingId"=>$splitArr['ingId'],
+		"ingYN"=>'YES',
+		"ingNotes"=>$splitArr['ingNotes'],
+		"timedDelivery"=>'Yes',
+		"createdTime"=>$date,
+	    );
+	    $r[] =$this->db->insert("orderitemingredients",$split_1);
+	}
+	$arrResult = $this->db->query("SELECT * FROM cartTemp WHERE userId='$userId' GROUP BY orderNo")->result_array();
+	foreach($arrResult as $splitArry) {
+	    $split_2 = array(
+		"businessId"=>$splitArry['businessId'],
+		"menuId"=>$splitArry['menuId'],
+		"subMenuId"=>$splitArry['submenuId'],
+		"itemId"=>$splitArry['itemId'],
+		"itemStorageId"=>$splitArry['orderNo'],
+		"endUserId"=>$splitArry['userId'],
+		"quantity"=>$splitArry['quantity'],
+		"totalPrice"=>$splitArry['totalPrice'],
+		"currencyFormat"=>'AED',
+		"timedDate"=>$datet,	
+		"timtedTime"=>$time,
+		"orderType"=>'order',
+		"createdTime"=>$date,
+		"status"=>'ordered',
+	    );
+	    $s[] = $this->db->insert("itemorder",$split_2);
+	}
+	$arrQty = $this->db->query("SELECT * FROM cartTemp WHERE userId='$userId' GROUP BY orderNo")->result_array();
+	$quantity = 0;
+	foreach($arrQty as $Qty){
+	   $businessId = $Qty['businessId'];
+	   $userId = $Qty['userId'];
+	   $quantity = $quantity + $Qty['quantity'];
+	}
+	$itemCount = array(
+	    "businessId"=>$businessId,
+	    "UserId"=>$userId,
+	    "count"=>$quantity,
+	    "timedDelivery"=>'YES',
+	    "createdTime"=>$date,
+	    "status"=>'ordered',
+	);
+	$o = $this->db->insert('orderitemcount',$itemCount);
+	if($o)
+	{
+	    $this->db->where('userId', $userId);
+	    return $this->db->delete('cartTemp'); 
+	}
+	
+    }
     function removeFromCart($orderNo,$userId)
     {
-	
 	$sql="DELETE FROM cartTemp WHERE userId='$userId' AND orderNo='$orderNo'";
         return $query = $this->db->query($sql);
     }
