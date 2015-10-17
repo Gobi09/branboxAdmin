@@ -2139,7 +2139,6 @@ class branboxModel extends CI_Model {
 	if ($result === false) {
 	    throw new \Exception(curl_error($ch));
 	}
-	 
 	curl_close($ch);
 	return $result;
     }

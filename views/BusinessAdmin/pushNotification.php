@@ -22,16 +22,13 @@
 					    <div class="col-md-6">
 						<h5 style="color: green"><b><?php if($send) {
 						    $json = json_decode($send, true);
-						    if($json['failure'] == '0'){
-							echo 'Notification Sent Succes';
+						    echo 'Notification Sent Succes :' .$json['success'];
 						    ?>
 						    </b></h5>
 						    <h5 style="color: red"><b>
 						    <?php
-						    }else{
-							echo 'Notification Sent failed';
-						    }
-						    }?></b></h5>
+						    echo 'Notification Sent failure :' .$json['failure'];
+						} ?> </b></h5>
 					    </div>
 					</div>
 				    <div class="col-md-offset-2 col-md-8">
