@@ -332,7 +332,7 @@ class branboxController extends CI_Controller {
 	    $pdf->Output($pdfFilePath, "f");
 	    
 	    $this->branboxModel->orderApproved($id,$userId,$itemId,$table);
-	    redirect(base_url('branboxController/dashboard'));
+	     redirect(base_url('branboxController/dashboard'));
 	}
 	$this -> load -> view('header');
 	$this -> load -> view('BusinessAdmin/acceptanceHeader');
@@ -1197,7 +1197,6 @@ class branboxController extends CI_Controller {
     }
     function imageListAdd()
     {
- 
 	$result['view']=$this->branboxModel->imageListAddNew();
 	redirect(base_url("branboxController/galleryAdd"));          
     }

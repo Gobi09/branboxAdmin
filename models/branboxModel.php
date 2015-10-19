@@ -1680,16 +1680,36 @@ class branboxModel extends CI_Model {
 	$sql="SELECT * FROM settings where businessId=$businessId"; 
 	return $this->db->query($sql, $return_object = TRUE)->result_array();
     }
+    
+    
+ 
     //color end
+    
+    
     //Gallery
-    function getImageNameNumber()
-    {
-	$businessId=$this->session->userdata('businessId');
-	$sql="SELECT * FROM gallery where businessId=$businessId"; 
-	return $this->db->query($sql, $return_object = TRUE)->result_array();
-    }
+    //Laxmi priya
     function imageListAddNew()
     {
+	//$url=$config['upload_path'] ='upload/gallery/';
+	//$config['allowed_types'] = 'gif|jpg|png';
+	//$this->load->library('upload', $config);
+	//$this->upload->do_upload('image');
+	//$path =  $this->upload->data();
+	//$fileName=$path['file_name'];
+	//$fileSize=$path['file_size'];
+	$date = date("Y-m-d H:i:s");
+	
+	$businessId=$this->session->userdata('businessId');
+	$count=$this->getSubMenuItem();
+	$url='upload/gallery/';
+	$new_name = time()."_".$businessId."_".$_FILES["image"]['name'];
+	$url='upload/gallery/'.$new_name;
+	file_put_contents(
+	    $url,
+	    base64_decode( 
+		str_replace('data:image/png;base64,', '', $this->input->post("galleryImage"))
+	    )
+	);
 	if($this->input->post('active')=="ON")
 	{
 	$ACTIVE='ON';
@@ -1698,16 +1718,13 @@ class branboxModel extends CI_Model {
 	{
 	$ACTIVE='OFF';
 	}
-	$ImagePath = $this->input->post('USER_IMAGE_FILE');
-	$ImageName = end(explode('/',$ImagePath));
-	$date = date("Y-m-d H:i:s");
-	$businessId = $this->session->userdata('businessId');
-	$data = array(                   
-	    'businessId'  => $businessId,
-	    'name'   =>$ImageName,
-	    'link'   => $ImagePath,
-	    'active'   =>  $ACTIVE,
-	    'createdTime'  =>  $date
+	$data=array(                   
+	    'businessId'  =>  $businessId,
+	    'name'   =>base_url().$url,
+	    'link'   => base_url($url) ,
+	     'active'   =>  $ACTIVE,
+	     //'size'=>$fileSize,
+	     'createdTime'  =>  $date
 	);
 	$this->db->insert('gallery',$data);               
     }
@@ -1819,10 +1836,6 @@ class branboxModel extends CI_Model {
     function deleteImageListRow($code)
     {
 	$businessId=$this->session->userdata('businessId');
-	$Sql = $this->db->query("SELECT * FROM gallery WHERE businessId='$businessId' AND id='$code'")->result_array();
-	$split = explode('.',$Sql[0]['name']);
-	unlink("upload/".$split[0].'.original.jpeg');
-	unlink("upload/".$Sql[0]['name']);
 	$this->db->where('businessId', $businessId); 
 	$this->db->where('id', $code); 
 	$this->db->delete('gallery');
