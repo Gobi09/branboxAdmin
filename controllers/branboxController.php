@@ -322,10 +322,6 @@ class branboxController extends CI_Controller {
 	if($_POST['approve'])
 	{
 	    $result=$this->branboxModel->orderAcceptance($id,$table);
-	    //echo "<pre>";
-	    //print_r($result);
-	    //echo "</pre>";
-	    //exit;
 	    $this->session->set_userdata('table',$table);
 	    $html=$this -> load -> view('BusinessAdmin/header2',"",true); 
 	    $html.=$this -> load -> view('BusinessAdmin/orderAcceptance',$result,true); //$this->load->view('DocumentPreview','', true);
@@ -336,22 +332,8 @@ class branboxController extends CI_Controller {
 	    $pdf->Output($pdfFilePath, "f");
 	    
 	    $this->branboxModel->orderApproved($id,$userId,$itemId,$table);
-	     redirect(base_url('branboxController/dashboard'));
-	    //$email = $result['data1'][0]['email'];
-	      
-	    //$Data=array(
-		    // "FromAdress"=>'ppkk036@gmail.com',
-		    // "ToAdress"=>$email,
-		    // "Subject"=>"Ordered Itedm At Branbox",
-		    // "Message"=>"Your Ordered items are on the way to your home",
-		    // "FilePath"=>"/branboxAdmin/".$pdfFilePath,
-		    // "SuccessMessage"=>"Your e-mail has been sent!",
-		     
-	   // );
-	    //$this->EmailSend($Data);
 	    redirect(base_url('branboxController/dashboard'));
 	}
-	
 	$this -> load -> view('header');
 	$this -> load -> view('BusinessAdmin/acceptanceHeader');
 	$this -> load -> view('BusinessAdmin/orderAcceptance',$result);

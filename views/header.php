@@ -66,7 +66,10 @@
     <link href="<?php echo base_url(); ?>assets/plugins/jquery-tag-it/css/jquery.tagit.css" rel="stylesheet" />
     <link href="<?php echo base_url(); ?>assets/chosen/chosen.css" rel="stylesheet" />
     <!-- ================== END PAGE LEVEL STYLE ================== -->
-    
+    <!--cropper css-->
+	<link rel="stylesheet" href="<?=site_url()?>assets/plugins/cropper/css/cropper.min.css">
+	<link rel="stylesheet" href="<?=site_url()?>assets/plugins/cropper/css/main.css">
+    <!--cropper css ends-->
     <!-- ================== Begin Cropper packages================== -->
 	<script src="<?php echo base_url(); ?>assets/cropper/js/yui-min.js"></script>
 	<link href="<?php echo base_url(); ?>assets/cropper/css/style.css" rel="stylesheet" />
@@ -140,7 +143,10 @@
     <!-- ================== BEGIN PAGE LEVEL Currency Format ================== -->
 	<script type="text/javascript" src="<?php echo base_url(); ?>assets/js/jquery.formatCurrency-1.4.0.js"></script>
     <!-- ================== END PAGE LEVEL JS ================== -->
-	
+    <!--cropper js-->
+	<script src="<?=site_url()?>assets/plugins/cropper/js/cropper.min.js"></script>
+	<script src="<?=site_url()?>assets/plugins/cropper/js/main.js"></script>
+    <!--cropper js ends-->
     
     <!--loader-->
 	<link href="<?php echo base_url(); ?>assets/css/jquery.loader.css" rel="stylesheet" />

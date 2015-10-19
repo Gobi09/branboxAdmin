@@ -108,35 +108,43 @@ background:-webkit-gradient(linear, 0 0, 0 100%, color-stop(0.02, #B4F6FF), colo
 		    </div>
 		    <h4 class="panel-title">Add Image To Gallery</h4>
 		</div>
-		<div class="panel-body">
+		<div class="panel-body" id="crop-avatar">
 		    <p style="color: #EB4688"><?php if (isset($error_message)) { echo $error_message; } ?></p>		   
 		    <div class="col-md-offset-1 col-md-7">
 			<form id="form_validation" method="POST" enctype="multipart/form-data" action="<?php echo base_url('branboxController/imageListAdd'); ?>" class="form-horizontal">
-			    <div class="">
-			   <!--<label class="">Menu Image</label>-->
-			    <div class="imageBox">
-				
-				<div class="thumbBox"><h3><center>Please select the image</center></h3></div>
-				<div class="spinner" style="display: none"></div>
+			   <div id="uploadphotomodal" class="modal fade" role="dialog">
+				<div class="modal-dialog">
+				    <!-- Modal content-->
+				    <div class="modal-content">
+					<div class="modal-header">
+					    <button type="button" class="close" data-dismiss="modal">&times;</button>
+					    <h4 class="modal-title">Modal Header</h4>
+					</div>
+					<div class="modal-body">
+					    <p>Some text in the modal.</p>
+					</div>
+					<div class="modal-footer">
+					    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				    </div>
+				</div>
 			    </div>
-			    <div class="action">
-				
-				<input type="file" class="file" name="image" style="float:left; width: 250px">
-				<input class="btn btn-primary" type="button" id="btnCrop" value="Crop" style="float: right">
-				
+			    <div class="form-group">
+				<label class="control-label"><center>Please Upload profile pic</center></label>
+				<!-- Current avatar class="avatar-view"-->
+				<div class="avatar-view fileupload" title="Change the avatar">
+				    <img src="<?=site_url()?>assets/img/noimage.jpg" alt="Avatar">
+				    <input type="hidden" name="USER_IMAGE_FILE" class="imageUrl" />
+				</div>
+				<!-- Loading state -->
+				<div class="loading" aria-label="Loading" role="img" tabindex="-1"></div>
 			    </div>
-			    <div class="cropped">
-				<img src="" class="imageId"  alt="" >
-				    <input type="hidden" value="" name="galleryImage" id="galleryImage">
-			    </div>
-			</div>
 			    <div class="form-group">
 				<label class="col-md-3 control-label">Image Status</label>
 				<div class="col-md-5">
 				    <input type="checkbox" data-render="switchery" data-theme="green" name="active" id="active" value="ON" checked />
 				</div>
 			    </div>
-			    
 			    <div class="col-md-offset-3 col-md-6">
 				 <div class="form-group">
 				    <label class="col col-4"></label>
@@ -146,6 +154,81 @@ background:-webkit-gradient(linear, 0 0, 0 100%, color-stop(0.02, #B4F6FF), colo
 				 </div>
 			      </div>
 			</form>
+			<!--<div class="container" id="crop-avatar">-->
+			<!-- Cropping modal -->
+			<div class="modal fade" id="avatar-modal" aria-hidden="true" aria-labelledby="avatar-modal-label" role="dialog" tabindex="-1">
+			<div class="modal-dialog modal-lg">
+			    <div class="modal-content">
+				<form class="avatar-form" action="<?=site_url('helpers/crop_helper.php')?>" enctype="multipart/form-data" method="post">
+				    <div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title" id="avatar-modal-label">Change Avatar</h4>
+				    </div>
+				    <div class="modal-body">
+					<div class="avatar-body">
+					    <!-- Upload image and data -->
+					    <div class="avatar-upload">
+						<input type="hidden" class="avatar-src" name="avatar_src" />
+						<input type="hidden" class="avatar-data" name="avatar_data" />
+						<label for="avatarInput">Local upload</label>
+						<input type="file" class="avatar-input" id="avatarInput" name="avatar_file" />
+					    </div>
+					    <!-- Crop and preview -->
+					    <div class="row">
+						<div class="col-md-9">
+						    <div class="avatar-wrapper"></div>
+						</div>
+						<div class="col-md-3">
+						    <div class="avatar-preview preview-lg"></div>
+						    <div class="avatar-preview preview-md"></div>
+						    <div class="avatar-preview preview-sm"></div>
+						</div>
+					    </div>
+					    <div class="row avatar-btns">
+						<div class="col-md-9">
+						    <div class="btn-group">
+							<button type="button" class="btn btn-primary" data-method="rotate" data-option="-90" title="Rotate -90 degrees">Rotate Left</button>
+							<button type="button" class="btn btn-primary" data-method="rotate" data-option="-15">-15deg</button>
+							<button type="button" class="btn btn-primary" data-method="rotate" data-option="-30">-30deg</button>
+							<button type="button" class="btn btn-primary" data-method="rotate" data-option="-45">-45deg</button>
+						    </div>
+						    <div class="btn-group">
+							<button type="button" class="btn btn-primary" data-method="rotate" data-option="90" title="Rotate 90 degrees">Rotate Right</button>
+							<button type="button" class="btn btn-primary" data-method="rotate" data-option="15">15deg</button>
+							<button type="button" class="btn btn-primary" data-method="rotate" data-option="30">30deg</button>
+							<button type="button" class="btn btn-primary" data-method="rotate" data-option="45">45deg</button>
+						    </div>
+						</div>
+						<div class="col-md-3">
+						    <button type="submit" class="btn btn-primary btn-block avatar-save">Done</button>
+						</div>
+					    </div>
+					</div>
+				    </div>
+				    <?php $galleryName = $this->branboxModel->getImageNameNumber();
+				    foreach($galleryName as $name) { 
+				    $imageName = explode('.',$name['name'])[0];
+				    $imageNumber[] = end(explode('-',$imageName));
+				    }
+				    $arr2 = range(1,max($imageNumber));                                                    
+				    $missing = array_diff($arr2,$imageNumber);
+				    if(empty($missing))
+				    {
+					echo $max = max($imageNumber) + 1;
+				    }else{
+					echo $max = $missing[1];
+				    }
+				    ?>
+				    <input type="hidden" name="ImageName" value="gallery-<?php echo $max;?>">
+				    <!-- <div class="modal-footer">
+				    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				    </div> -->
+				</form>
+			    </div>
+			</div>
+		    </div>
+			
+		    <!-- Cropping modal -->
 		    </div>
 		<!--    <div class="row">-->
 		<!--	<div class="col-md-12">-->
