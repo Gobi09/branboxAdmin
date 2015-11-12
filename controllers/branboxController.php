@@ -3,7 +3,7 @@
 class branboxController extends CI_Controller {
     function branboxController(){
 	parent::__construct();
-	$this->load->helper(array('form', 'html'));
+	$this->load->helper(array('form', 'html','url'));
 	$this->load->model('branboxModel');
 	$this->load->library('session');
 	$this->load->library("pagination");
@@ -1006,15 +1006,15 @@ class branboxController extends CI_Controller {
 	$businessId=$this->session->userdata('businessId');
 	$true=$this->branboxModel->alreadyExists("about","WHERE businessId='$businessId'");
 	$this->session->set_userdata('newUser',$true);
-	
-	    if(isset($_POST['Update']))
-	    {
-		$data['update'] = $this->branboxModel->aboutUsUpdate();
-		redirect('branboxController/aboutUs');
-	    }
+	if(isset($_POST['Update']))
+	{
+	    $data['update'] = $this->branboxModel->aboutUsUpdate();
+	    redirect('branboxController/aboutUs');
+	}
 	if($true==1)
 	{
 	    $data['edit'] = $this->branboxModel->aboutUsEdit();
+	    $data['aboutGallery'] = $this->branboxModel->getAboutGallery();
 	    $this -> load -> view('header');
 	    $this -> load -> view('BusinessAdmin/aboutUs',$data);
 	}
@@ -1024,7 +1024,13 @@ class branboxController extends CI_Controller {
 	    $this -> load -> view('BusinessAdmin/aboutUs');
 	}
     }
-    
+    function aboutGalleryTrash($id)
+    {
+	$data = $this->branboxModel->aboutGalleryTrash($id);
+	if($data){
+	    redirect('branboxController/aboutUs');
+	}
+    }
     function orderedItem()
     {
 	$data['orderItem'] = $this->branboxModel->orderedItem();
@@ -1064,11 +1070,8 @@ class branboxController extends CI_Controller {
 	$this -> load -> view('BusinessAdmin/gallery');
     }
     //About Us End
-    
-    
     //Settings Start
     //Ezhilarasan Controller for colorView start
-    
     function colorView()
     {
 	$businessId=$this->session->userdata('businessId');
@@ -1105,7 +1108,6 @@ class branboxController extends CI_Controller {
     
     function galleryAdd()
     {
-	
 	$config = array();
         $config["base_url"] = base_url()."branboxController/galleryAdd";
         $total_row= $this->branboxModel->record_count();
@@ -1142,7 +1144,6 @@ class branboxController extends CI_Controller {
 	$config['cur_tag_close'] = '</a>';
 	$config['next_link'] = 'Next';
 	$config['prev_link'] = 'Previous';
-	
 	$this->pagination->initialize($config);
 	$page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
 	$data["results"] = $this->branboxModel->fetch_Videodata($config["per_page"], $page);

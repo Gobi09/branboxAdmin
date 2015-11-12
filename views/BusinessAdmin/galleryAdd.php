@@ -82,6 +82,8 @@ background:-webkit-gradient(linear, 0 0, 0 100%, color-stop(0.02, #B4F6FF), colo
     margin-right: 10px;
     padding-bottom: 10px;
 }
+/*cropper image*/
+
 </style>
 
 <div id="content" class="content">
@@ -110,34 +112,45 @@ background:-webkit-gradient(linear, 0 0, 0 100%, color-stop(0.02, #B4F6FF), colo
 		</div>
 		<div class="panel-body">
 		    <p style="color: #EB4688"><?php if (isset($error_message)) { echo $error_message; } ?></p>		   
-		    <div class="col-md-offset-1 col-md-7">
+		    <div class="col-md-offset-1">
 			<form id="form_validation" method="POST" enctype="multipart/form-data" action="<?php echo base_url('branboxController/imageListAdd'); ?>" class="form-horizontal">
-			    <div class="">
-			   <!--<label class="">Menu Image</label>-->
-			    <div class="imageBox">
-				
-				<div class="thumbBox"><h3><center>Please select the image</center></h3></div>
-				<div class="spinner" style="display: none"></div>
-			    </div>
-			    <div class="action">
-				
-				<input type="file" class="file" name="image" style="float:left; width: 250px">
-				<input class="btn btn-primary" type="button" id="btnCrop" value="Crop" style="float: right">
-				
-			    </div>
-			    <div class="cropped">
-				<img src="" class="imageId"  alt="" >
-				    <input type="hidden" value="" name="galleryImage" id="galleryImage">
-			    </div>
-			</div>
-			    <div class="form-group">
-				<label class="col-md-3 control-label">Image Status</label>
-				<div class="col-md-5">
-				    <input type="checkbox" data-render="switchery" data-theme="green" name="active" id="active" value="ON" checked />
+			    <div class="row">
+				<div class="col col-md-4" id="original">
+				    <div class="image-editor">
+					<div class="cropit-image-preview-container">
+					  <div class="cropit-image-preview"></div>
+					</div>
+					<div class="image-size-label">Resize image</div>
+					<div class="col col-md-10 col-sm-6 col-xs-12">
+					    <input type="range" class="cropit-image-zoom-input">
+					</div>
+				    
+				    <div class="p-t-30">
+					<div class="col col-md-6 col-xs-6 col-sm-6">
+					    <input type="file" class="cropit-image-input" name="image" id="imagelabel" style="position: absolute; clip: rect(0px, 0px, 0px, 0px);" >
+					    <label class="btn btn-sm btn-default" for="imagelabel">
+						<span class="glyphicon glyphicon-folder-open"></span>
+						Choose file
+					    </label>    
+					</div>
+					<div class="col-md-4 col-xs-6 col-sm-3">
+					    <a id="crop" class="btn btn-sm btn-warning">Crop Image</a>
+					</div>
+				    </div>
+				    </div>
 				</div>
+				<div class="col col-md-6 p-t-30 hide" id="preview">
+				    <img src="<?php echo site_url('assets/img/noimage.jpg')?>" id="cropImage" class="img-responsive">
+				    <div class="col col-md-12 col-sm-12 col-xs-12 p-t-20">
+					<input type="checkbox" name="active" onchange="if($(this).prop('checked')) { $(this).val('ON'); }else{ $(this).val('OFF'); }" id="active" value="ON" data-render="switchery" data-theme="default" checked />
+					Image Status
+					<!--<input type="hidden" name="active" id="active" value="ON" />-->
+				    </div>
+				</div>
+				<input type="hidden" value="" name="galleryImage" id="galleryImage">
 			    </div>
 			    
-			    <div class="col-md-offset-3 col-md-6">
+			    <div class="col-md-offset-3 col-md-6 p-t-20">
 				 <div class="form-group">
 				    <label class="col col-4"></label>
 				    <button class="btn btn-md btn-danger " onclick="window.history.back();" type="button">Cancel</button>
@@ -147,16 +160,6 @@ background:-webkit-gradient(linear, 0 0, 0 100%, color-stop(0.02, #B4F6FF), colo
 			      </div>
 			</form>
 		    </div>
-		<!--    <div class="row">-->
-		<!--	<div class="col-md-12">-->
-		<!--	    <div class="col-md-3 ">-->
-		<!--		-->
-		<!--	    </div>-->
-		<!--	    -->
-		<!--	</div>-->
-		<!--    </div>-->
-		    
-		    
 		    <div class="row">
 			<div class="col-md-12">
 			<?php if(count($results) > 0)
@@ -191,7 +194,6 @@ background:-webkit-gradient(linear, 0 0, 0 100%, color-stop(0.02, #B4F6FF), colo
 							$("#active-<?php echo $viewShowResult['id']; ?>").removeAttr("class");
 							$("#active-<?php echo $viewShowResult['id']; ?>").attr("class","btn btn-danger");
 						    }
-						
 						},
 					    });
 					});
@@ -229,65 +231,35 @@ background:-webkit-gradient(linear, 0 0, 0 100%, color-stop(0.02, #B4F6FF), colo
 <!-- end page container -->
 
 <script type="text/javascript">
-//image for burtlan start
-    function PreviewImage() {
-	var image =document.getElementById("filestyle-11").value;
-	$('#filestyle-21').val(image);
-	//alert('ahi');
-	var oFReader = new FileReader();
-	oFReader.readAsDataURL(document.getElementById("filestyle-11").files[0]);	    
-	oFReader.onload = function (oFREvent) {
-	    var data1=document.getElementById("show_image11").src = oFREvent.target.result;	    
-	};
-    };
-    
-    $("#faq_title").click(function(){
+    FormSliderSwitcher.init();
+$("#faq_title").click(function(){
     var title = $(this).text();
-
     $.ajax({
         url: 'imageListView',
         data: ({'title': title}),
         dataType: 'json', 
         type: "post",
         success: function(data){
-                      response = jQuery.parseJSON(data);            
-                   console.log(response); }             
+            response = jQuery.parseJSON(data);            
+        }             
     });
+});
+$(function() {
+    $('.image-editor').cropit({
+      //exportZoom: 1.25,
+      imageBackground: true,
+      imageBackgroundBorderWidth: 20,
     });
-//image for burtlan end
-</script>
-	<script type="text/javascript">
-    YUI().use('node', 'crop-box', function(Y){
-        var options =
-        {
-            imageBox: '.imageBox',
-            thumbBox: '.thumbBox',
-            spinner: '.spinner',
-            imgSrc: 'avatar.png'
-        }
-        var cropper = new Y.cropbox(options);
-        Y.one('.file').on('change', function(){
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                options.imgSrc = e.target.result;
-                cropper = new Y.cropbox(options);
-            }
-            reader.readAsDataURL(this.get('files')._nodes[0]);
-            this.get('files')._nodes = [];
-        })
-        Y.one('#btnCrop').on('click', function(){
-            var img = cropper.getDataURL();
-	    galleryImage
-	    $(".imageId").attr("src",img);
-	    $("#galleryImage").val(img);
-	    
-            Y.one('.imageId').attr("src",img);
-        })
+    $('#crop').click(function() {
+	var imageData = $('.image-editor').cropit('export');
+	$('#cropImage').attr('src',imageData);
+	$('#galleryImage').val(imageData);
+	$('#original').addClass('hide');
+	$('#preview').removeClass('hide');
       
-    })
+    });
+});
 </script>
-	
 </body>
-
 </html>
 

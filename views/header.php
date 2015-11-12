@@ -152,8 +152,9 @@
 	<link href="<?php echo base_url(); ?>assets/css/jquery.loader.css" rel="stylesheet" />
 	<script type="text/javascript" src="<?php echo base_url(); ?>assets/plugins/loader/jquery.loader.js"></script>
     <!--end loader-->
-	
-	
+    <!--cropper by pravinkumar-->
+    <script src="<?=site_url()?>assets/plugins/cropImage/jquery.cropit.js"></script>
+    <!--cropper end-->
 <!--   Dashboard  -->
 <script src="<?php echo base_url(); ?>assets/js/dashboard-v2.min.js"></script>
 <!-- Dashboard End-->
@@ -370,6 +371,27 @@
 	    background-image: url(http://appnlogic.com/burtlan/assets/img/login-bg/1647368.jpg);
 	    /*background: #f0f3f4 ;*/
 	}
+	.cropit-image-preview {
+    background-color: #f8f8f8;
+    background-size: cover;
+    border: 5px solid #ccc;
+    border-radius: 3px;
+    margin-top: 7px;
+    width: 250px;
+    height: 250px;
+    cursor: move;
+  }
+
+  .cropit-image-background {
+    opacity: .2;
+    cursor: auto;
+  }
+
+  .image-size-label {
+    margin-top: 10px;
+  }
+
+
     </style>
 </head>
 <body>

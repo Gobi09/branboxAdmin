@@ -1428,10 +1428,7 @@ class branboxModel extends CI_Model {
      private function set_upload_options() //  upload an image options
     {
 	$config = array();
-	$config['upload_path'] ='upload/aboutUs
-	
-	
-	';
+	$config['upload_path'] ='upload/aboutUsGallery';
 	$config['allowed_types'] ='*';
 	$config['max_size']      = '0';
 	$config['overwrite']     = FALSE;		
@@ -1445,125 +1442,94 @@ class branboxModel extends CI_Model {
 	$sql= $this->db->get("about");
 	return $sql->result_array();
     }
-    
+    function getAboutGallery()
+    {
+	$businessId=$this->session->userdata('businessId');
+	$this->db->where('businessId', $businessId); 
+	$sql= $this->db->get("aboutgallery");
+	return $sql->result_array();
+    }
+    function getAboutUsTableOnUI($bId)
+    {
+	$this->db->where('businessId', $bId); 
+	$sql= $this->db->get("about");
+	return $sql->result_array();
+    }
+    function aboutGalleryTrash($id)
+    {
+	$this->db->where('id', $id); 
+	return $this->db->delete("aboutgallery");
+	
+    }
     function aboutUsUpdate()
-        {
-	$aboutImags="";
+    {
+	$this->load->library('upload');
+	$businessId = $this->session->userdata('businessId');
+	$tableId = $this->input->post('tableId');
+	$convertedImage = $this->input->post("aboutusImage");
+	$image = $this->input->post("aboutusImage");
+	$imageName = $this->input->post("imageName");
+	if($tableId){
+	    if($image)
+	    {
+		$url='upload/aboutUsGallery/';
+		$url='upload/aboutUs/'.$imageName;
+		file_put_contents($url,base64_decode(str_replace('data:image/png;base64,', '', $convertedImage)));
+		$data = array (
+		'businessId'=> $businessId,
+		'title'       =>$this->input->post('title'),
+		'image'       =>site_url().$url,
+		'description' =>$this->input->post('description'),
+		);
+		$this->db->where('businessId', $businessId);
+		$this->db->update('about',$data);
+	    }else{
+		    $data = array(
+		    'businessId'=> $businessId,
+		    'title'       =>$this->input->post('title'),
+		    'description' =>$this->input->post('description'),
+		    'image'       =>$this->input->post('oldfile')
+		    );
+		    $this->db->where('businessId', $businessId);
+		    $this->db->update('about',$data);    
+		}
+	    }else{
+		if($_FILES["image"]['name']){
+		    $url='upload/aboutUsGallery/';
+		    $url='upload/aboutUs/'.$imageName;
+		    file_put_contents($url,base64_decode(str_replace('data:image/png;base64,', '', $convertedImage)));
+		}else{
+		    $url ='';
+		}
+	    $data = array (
+	    'businessId'=> $businessId,
+	    'title'       =>$this->input->post('title'),
+	    'image'       =>site_url().$url,
+	    'description' =>$this->input->post('description'),
+	    );
+	    $this->db->insert('about',$data);
+	}
+	$lineCount = count($_FILES['Aboutgalleryimage']['name']);
 	$this->load->library('upload');
 	$files = $_FILES;
-	
-	    //if($_FILES["Aboutgalleryimage"]["name"]=="")
-	    //{
-		//$data_count = count($_FILES['Aboutgalleryimage']['name']);
-	    
-		//echo "count ".$data_count;
-	       //exit;
-		//for ($i=0; $i<$data_count; $i++)
-		//{
-		    
-		///    $_FILES['userfile']['name']= $files['Aboutgalleryimage']['name'][$i];
-		//    $_FILES['userfile']['name']= $files['Aboutgalleryimage']['name'][$i];
-		//    $_FILES['userfile']['type']= $files['Aboutgalleryimage']['type'][$i];
-		 //   $_FILES['userfile']['tmp_name']= $files['Aboutgalleryimage']['tmp_name'][$i];
-		 //   $_FILES['userfile']['error']= $files['Aboutgalleryimage']['error'][$i];
-		 //   $_FILES['userfile']['size']= $files['Aboutgalleryimage']['size'][$i];    
-		    
-		    
-		   // $this->upload->initialize($this->set_upload_options());
-		   // $data=$this->upload->do_upload();
-		  //  $aboutImags =$aboutImags.base_url()."upload/aboutUsGallery/".$_FILES['userfile']['name'].",";
-		    
-		    
-		//}
-		//echo "new";
-	   // }
-	//else{
-	    
-	    $aboutImags = implode(",",$this->input->post('oldAboutUsImages'));
-	    if($aboutImags!="")
-	    $aboutImags=$aboutImags.",";
-	 	$oldCount= count($this->input->post('oldAboutUsImages'));
-	  
-		$data_count = count($_FILES['Aboutgalleryimage']['name']);
-	     //exit;
-	    for ($i=0; $i<$data_count; $i++)
-	    {
-		
-		$_FILES['userfile']['name']= $files['Aboutgalleryimage']['name'][$i];
-		$_FILES['userfile']['name']= $files['Aboutgalleryimage']['name'][$i];
-		$_FILES['userfile']['type']= $files['Aboutgalleryimage']['type'][$i];
-		$_FILES['userfile']['tmp_name']= $files['Aboutgalleryimage']['tmp_name'][$i];
-		$_FILES['userfile']['error']= $files['Aboutgalleryimage']['error'][$i];
-		$_FILES['userfile']['size']= $files['Aboutgalleryimage']['size'][$i];
-		
-		
-		$this->upload->initialize($this->set_upload_options());
-		$data=$this->upload->do_upload();
-		$aboutNewImags =$aboutNewImags .base_url()."upload/aboutUsGallery/".$_FILES['userfile']['name'].",";
-		
-		
-	    }
-	    
-	   // print_r($aboutNewImags);
-	  $totlaImage= $aboutImags.$aboutNewImags;
-	   //exit;
-		
-	//}
-	
-	if($_FILES["image"]["name"]!="")
+	for($i=0; $i<$lineCount;$i++)
 	{
-	    //$url=$config['upload_path'] ='upload/aboutUs/';
-	    //$config['allowed_types'] = 'gif|jpg|png';
-	    //$this->load->library('upload', $config);
-	    //$this->upload->do_upload('image');
-	    //$data =  $this->upload->data();
-	    //$filename=$data['file_name'];
-	    $url='upload/aboutUsGallery/';
-		$new_name = time()."_".$businessId."_".$_FILES["image"]['name'];
-		$url='upload/aboutUsGallery/'.$new_name;
-		file_put_contents(
-		    $url,
-		    base64_decode( 
-			str_replace('data:image/png;base64,', '', $this->input->post("aboutusImage"))
-		    )
-		);
-		$url=base_url().$url;
-	}
-	else
-	{
-	    $filename=$this->input->post('oldfile');
-	}
-	
-	$businessId=$this->session->userdata('businessId');
-	$newUser=$this->session->userdata('newUser');
-	if($newUser==1)
-	{
-	    $data = array
-	    (
-	    'title'       =>$this->input->post('title'),
-	    'image'       =>$url,
-	    'description' =>$this->input->post('description'),
-	    'aboutGalleryImages'=>$totlaImage
-	    );
-	    $this->db->where('businessId', $businessId);
-	  return   $return= $this->db->update('about',$data);
-	}
-	else
-	{
+	    $_FILES['userfile']['name']= $files['Aboutgalleryimage']['name'][$i];
+	    $_FILES['userfile']['tmp_name']= $files['Aboutgalleryimage']['tmp_name'][$i];
+	    $this->upload->initialize($this->set_upload_options());
+	    $this->upload->do_upload();
+	    $fileData =  $this->upload->data();
 	    $data = array
 	    (
 		'businessId'=>$businessId,
-		'title'       =>$this->input->post('title'),
-		'image'       =>$url,
-		'description' =>$this->input->post('description'),
-		'aboutGalleryImages'=>$aboutImags
+		'imageName'=>$fileData['file_name'],
+		'imageUrl'=>base_url().'/upload/aboutUsGallery/'.$fileData['file_name']
 	    );
-	 return   $return =$this->db->insert('about',$data);
-	   
+	    $this->db->insert('aboutgallery',$data);
 	}
+	
+	return ;
     }
-
-    
     function orderedItem()
     {
 	$businessId=$this->session->userdata('businessId');
@@ -1687,29 +1653,15 @@ class branboxModel extends CI_Model {
     
     
     //Gallery
-    //Laxmi priya
     function imageListAddNew()
     {
-	//$url=$config['upload_path'] ='upload/gallery/';
-	//$config['allowed_types'] = 'gif|jpg|png';
-	//$this->load->library('upload', $config);
-	//$this->upload->do_upload('image');
-	//$path =  $this->upload->data();
-	//$fileName=$path['file_name'];
-	//$fileSize=$path['file_size'];
 	$date = date("Y-m-d H:i:s");
-	
 	$businessId=$this->session->userdata('businessId');
 	$count=$this->getSubMenuItem();
 	$url='upload/gallery/';
 	$new_name = time()."_".$businessId."_".$_FILES["image"]['name'];
 	$url='upload/gallery/'.$new_name;
-	file_put_contents(
-	    $url,
-	    base64_decode( 
-		str_replace('data:image/png;base64,', '', $this->input->post("galleryImage"))
-	    )
-	);
+	file_put_contents($url,base64_decode(str_replace('data:image/png;base64,', '', $this->input->post("galleryImage"))));
 	if($this->input->post('active')=="ON")
 	{
 	$ACTIVE='ON';
@@ -1720,7 +1672,7 @@ class branboxModel extends CI_Model {
 	}
 	$data=array(                   
 	    'businessId'  =>  $businessId,
-	    'name'   =>base_url().$url,
+	    'name'   =>$new_name,
 	    'link'   => base_url($url) ,
 	     'active'   =>  $ACTIVE,
 	     //'size'=>$fileSize,
