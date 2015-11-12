@@ -37,7 +37,7 @@
 				<h4 class="panel-title">About Us</h4>
 			    </div>
 			    <div class="panel-body">
-				<form class="form-horizontal form12" id="form_validation" method="POST" enctype="multipart/form-data" action="<?php echo base_url('branboxController/aboutUs');?>">
+				<form class="form-horizontal" id="form_validation" method="POST" enctype="multipart/form-data" action="<?php echo base_url('branboxController/aboutUs');?>">
 				    <div class="row">
 					<div class="col-md-8">
 					    <div class="form-group">
@@ -57,42 +57,39 @@
 					</div>
 				    </div>
 				    <div class="row">
-					<div class="col-md-4 col-sm-5 col-md-offset-1">
+					<div class="col-md-4 col-sm-5 col-md-offset-2">
 					    <h5>About Us Image</h5>
 					    <input type="hidden" name="oldImage" id="" value="<?php echo $edit[0]['image']?>" >
-					    <img class="superbox-img previewimage img-responsive" id="show_image11" name="show_image" src="<?php if($edit[0]['image']) { echo $edit[0]['image']; }else{ echo site_url('/assets/img/noimage.jpg'); } ?>">
-					     <!--<input id="filestyle-11" class="filestyle img-responsive" type="file" name='image' onchange="PreviewImage();"  data-buttonbefore="true" style="position: absolute; clip: rect(0px, 0px, 0px, 0px);" tabindex="-1">-->
-					</div>
-					<div class="col-md-4 col-sm-5 col-md-offset-1" id="original">
-					    <h5>Image Upload</h5>
-					    <div class="image-editor">
-						<div class="cropit-image-preview-container">
-						  <div class="cropit-image-preview"></div>
-						</div>
-						<div class="image-size-label">Resize image</div>
-						<div class="col-md-9 col-sm-12 col-xs-12">
-						    <input type="range" class="cropit-image-zoom-input">
-						</div>
-					    
-					    <div class="p-t-30">
-						<div class="col-md-5 col-sm-9 col-xs-6">
-						    <input type="file" class="cropit-image-input" name="image" id="imagelabel" style="position: absolute; clip: rect(0px, 0px, 0px, 0px);" >
-						    <label class="btn btn-default btn-sm" for="imagelabel">
-							<span class="glyphicon glyphicon-folder-open"></span>
-							Choose file
-						    </label>
-						</div>
-						<div class="col-md-4 col-xs-6 col-sm-3">
-						    <div class="col col-md-1">
-							<a id="crop" class="btn btn-sm btn-warning">Crop Image</a>
+					    <img class="superbox-img previewimage img-responsive" id="show_image11" name="show_image" src="<?php if($edit[0]['image']) { echo $edit[0]['image']; }else{ echo site_url('/assets/img/noimage.jpg'); } ?>" onclick="$(this).addClass('hide');$('#original').removeClass('hide');$('#imagelabel').click();" >
+					    <div class="col-md-10 col-sm-5 hide" id="original">
+						<div class="image-editor">
+						    <div class="cropit-image-preview-container">
+						      <div class="cropit-image-preview"></div>
+						    </div>
+						    <div class="image-size-label">Resize image</div>
+						    <div class="col-md-12 col-sm-12 col-xs-12">
+							<input type="range" class="cropit-image-zoom-input">
+						    </div>
+						    <div class="p-t-30">
+							<div class="col-md-6 col-sm-9 col-xs-6">
+							    <input type="file" class="cropit-image-input" name="image" id="imagelabel" style="position: absolute; clip: rect(0px, 0px, 0px, 0px);" >
+							    <label class="btn btn-default btn-sm" for="imagelabel">
+								<span class="glyphicon glyphicon-folder-open"></span>
+								Choose file
+							    </label>
+							</div>
+							<div class="col-md-4 col-xs-6 col-sm-3">
+							    <div class="col col-md-1">
+								<a id="crop" class="btn btn-sm btn-warning">Crop Image</a>
+							    </div>
+							</div>
 						    </div>
 						</div>
 					    </div>
-					    </div>
-					</div>
-					<div class="col col-md-6 p-t-30 hide col-md-offset-1" id="preview">
-					    <img src="<?php echo site_url('assets/img/noimage.jpg')?>" id="cropImage" class="img-responsive">
-					    <input type="hidden" name="aboutusImage" id="aboutusImage">
+					    <div class="hide" id="preview">
+						<img src="<?php echo site_url('assets/img/noimage.jpg')?>" id="cropImage" class="img-responsive">
+						<input type="hidden" name="aboutusImage" id="aboutusImage">
+					    </div> 
 					</div>
 				    </div>
 					<!-- <div class="">-->
@@ -157,7 +154,7 @@
 					    </div>
 					</div>
 				    </div>
-				    <div class="col-md-12 col-md-offset-3 p-t-10">
+				    <div class="col-md-12 p-t-10">
 					<fieldset>
 					    <input type="submit" class="btn btn-sm btn-success" name="Update" value="<?php if(isset($edit[0]['description'])) echo "Update"; else echo "Save";?>">
 					    <button type="button" class="btn btn-sm btn-danger" onclick="window.history.back();">Cancel</button>

@@ -64,50 +64,49 @@ Modified on: 24/03/15
 				    <div class="col-xs-12 col-sm-12">
 					<img src="<?php echo site_url('assets/img/noimage.jpg')?>" class="img-responsive" id="dummy" onclick="$(this).addClass('hide');$('#original').removeClass('hide');$('#imagelabel').click();">
 				    </div>
-					<div class="col col-md-4 hide" id="original">
-					    <div class="image-editor">
-						<div class="cropit-image-preview-container">
-						  <div class="cropit-image-preview"></div>
-						</div>
-						<div class="image-size-label">Resize image</div>
-						<div class="col col-md-10 col-sm-5 col-xs-12">
-						    <input type="range" class="cropit-image-zoom-input">
-						</div>
-					    <div class="p-t-30">
-						<div class="col-md-8 col-xs-6 col-sm-3">
-						    <input type="file" class="cropit-image-input" name="image" id="imagelabel" style="position: absolute; clip: rect(0px, 0px, 0px, 0px);" >
-						    <label class="btn btn-sm btn-default" for="imagelabel">
-							<span class="glyphicon glyphicon-folder-open"></span>
-							Choose file
-						    </label>    
-						</div>
-						<div class="col-md-4 col-xs-6 col-sm-3">
-						    <a id="crop" class="btn btn-sm btn-warning">Crop Image</a>
-						</div>
+				    <div class="col col-md-4 hide" id="original">
+					<div class="image-editor">
+					    <div class="cropit-image-preview-container">
+					      <div class="cropit-image-preview"></div>
 					    </div>
+					    <div class="image-size-label">Resize image</div>
+					    <div class="col col-md-10 col-sm-5 col-xs-12">
+						<input type="range" class="cropit-image-zoom-input">
+					    </div>
+					<div class="p-t-30">
+					    <div class="col-md-8 col-xs-6 col-sm-3">
+						<input type="file" class="cropit-image-input" name="image" id="imagelabel" style="position: absolute; clip: rect(0px, 0px, 0px, 0px);" >
+						<label class="btn btn-sm btn-default" for="imagelabel">
+						    <span class="glyphicon glyphicon-folder-open"></span>
+						    Choose file
+						</label>    
+					    </div>
+					    <div class="col-md-4 col-xs-6 col-sm-3">
+						<a id="crop" class="btn btn-sm btn-warning">Crop Image</a>
 					    </div>
 					</div>
-					<input type="hidden" value="" name="menuImage" id="menuImage">
-					<div class="col col-md-6 p-t-30 hide" id="preview">
-					    <img src="<?php echo site_url('assets/img/noimage.jpg')?>" id="cropImage" class="img-responsive">
-					    <div class="form-group p-t-10">
-						<label class="col-md-3 control-label">Menu Status</label>
-						<div class="col-md-9">
-						    <label class="col-md-1 control-label">OFF</label>
-						    <div class="col-md-2"><input type="checkbox"  data-render="switchery" data-theme="green" value="ON" name="status" id="status"  checked /></div>
-						    <label class="col-md-4 control-label">ON</label>
-						</div>
-					    </div>
-					    <div class="form-group">
-						<label class="col-md-3 control-label">Menu Online Status</label>
-						<div class="col-md-9">
-						    <label class="col-md-1 control-label">OFF</label>
-						    <div class="col-md-2"><input type="checkbox" data-render="switchery" data-theme="green"  value="ON" name="online" id="online" checked /></div>
-						    <label class="col-md-4 control-label">ON</label>
-						</div>
+					</div>
+				    </div>
+				    <input type="hidden" value="" name="menuImage" id="menuImage">
+				    <div class="col col-md-6 p-t-30 hide" id="preview">
+					<img src="<?php echo site_url('assets/img/noimage.jpg')?>" id="cropImage" class="img-responsive">
+					<div class="form-group p-t-10">
+					    <label class="col-md-3 control-label">Menu Status</label>
+					    <div class="col-md-9">
+						<label class="col-md-1 control-label">OFF</label>
+						<div class="col-md-2"><input type="checkbox"  data-render="switchery" data-theme="green" value="ON" name="status" id="status"  checked /></div>
+						<label class="col-md-4 control-label">ON</label>
 					    </div>
 					</div>
-				  
+					<div class="form-group">
+					    <label class="col-md-3 control-label">Menu Online Status</label>
+					    <div class="col-md-9">
+						<label class="col-md-1 control-label">OFF</label>
+						<div class="col-md-2"><input type="checkbox" data-render="switchery" data-theme="green"  value="ON" name="online" id="online" checked /></div>
+						<label class="col-md-4 control-label">ON</label>
+					    </div>
+					</div>
+				    </div>
 				</div>
 			    </div>
 			 <!-- <div class="form-group">
