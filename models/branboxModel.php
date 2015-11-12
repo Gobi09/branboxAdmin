@@ -533,9 +533,7 @@ class branboxModel extends CI_Model {
 	if($_FILES['image']['name']=="")
     	{
     	    $url=$this->input->post('oldImage');
-	}	
-	else
-	{
+	}else{
 		$url='upload/menu/';
 		$new_name = time()."_".$businessId."_".$_FILES["image"]['name'];
 		$url='upload/menu/'.$new_name;
