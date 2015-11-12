@@ -912,13 +912,8 @@ class branboxModel extends CI_Model {
 		str_replace('data:image/png;base64,', '', $this->input->post("subMenuItemImage"))
 	    )
 	);
-	
-        
-       // $type = pathinfo($path1, PATHINFO_EXTENSION);
-	//$data = file_get_contents($logo);
-	//$arrayData= 'data:image/' . $type . ';base64,' . base64_encode($data);
-
-	if($this->input->post("status")!="ON")
+	$url =site_url().$url;
+        if($this->input->post("status")!="ON")
 	{
 	    $status="OFF";
 	}
