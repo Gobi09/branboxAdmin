@@ -25,7 +25,7 @@
 							<tr>
 							    <th>Item Name</th>
 							    <th>Quantity</th>
-							    <th>Price</th>
+							    <!--<th>Price</th>-->
 							    <th>Total</th>
 							    <th>Action</th>
 							</tr>
@@ -40,7 +40,7 @@
 								<td><?php echo $name['name']?></td>
 							    <?php break; } } ?>
 							    <td><?php echo $data['quantity']?></td>
-							    <td><?php echo $data['actualPrice']?></td>
+							    <!--<td><?php echo $data['actualPrice']?></td>-->
 							    <td><?php echo  $data['totalPrice']; ?></td>
 							    <td><button class="btn btn-xs btn-danger" onclick="cartDeleteItem('<?php echo $data['userId']?>','<?php echo $data['orderNo']?>')"><i class="fa fa-trash-o"></i></button></td>
 							</tr>
@@ -125,7 +125,7 @@
 							<input type="hidden" name="Ingid" value="<?php echo $row['id'];?>">
 							<input type="hidden" name="ingredientName" value="<?php echo $row['ingredients'];?>">
 							<td><label><?php echo $row['ingredients'];?></label></td>
-							<td><input type="text" name="ingredients"> <span><b><?php echo $row['price'];?> AED</b></span> </td>
+							<td><input type="text" name="ingredients"> <span><b><?php echo number_format($row['price'],2);?> </b></span> </td>
 							<td>
 							<?php if($row['category'] == 'addon') { ?>
 							<input type="checkbox" onclick="if($(this).attr('checked')){ $(this).next().val('YES') }else{ $(this).next().val('NO') }">

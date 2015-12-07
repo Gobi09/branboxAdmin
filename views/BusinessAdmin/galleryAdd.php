@@ -247,6 +247,8 @@ $("#faq_title").click(function(){
 $(function() {
     $('.image-editor').cropit({
       //exportZoom: 1.25,
+      width: 300,
+      height: 300,
       imageBackground: true,
       imageBackgroundBorderWidth: 20,
     });
